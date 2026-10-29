@@ -177,6 +177,14 @@ input:focus,select:focus,textarea:focus{border-color:var(--ink);box-shadow:0 0 0
 .fs summary::-webkit-details-marker{display:none}
 .fs summary::before{content:"+";width:14px;font:400 18px var(--sans);color:var(--mu)}
 .fs[open] summary::before{content:"–"}
+.fgq{display:inline-flex;align-items:center;gap:12px;margin-left:18px;font:500 12px var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);cursor:default}
+.fgq b{font-weight:600}
+.yn{display:inline-flex;align-items:center;gap:6px;cursor:pointer;padding:4px 0}
+.yn i{width:17px;height:17px;border:1.5px solid var(--line2);border-radius:3px;background:var(--sheet);display:grid;place-items:center}
+.yn[aria-checked=true] i{background:var(--ac);border-color:var(--ac)}
+.yn[aria-checked=true] i::after{content:"";width:5px;height:9px;border:solid #fff;border-width:0 2px 2px 0;transform:translateY(-1px) rotate(45deg)}
+.yn:focus-visible{outline:2px solid var(--ac);outline-offset:2px;border-radius:3px}
+@media (max-width:420px){.fs summary{flex-wrap:wrap}.fgq{margin-left:0;flex-basis:100%;order:3;padding-left:24px}}
 .fs summary small{margin-left:auto;font:400 12px var(--sans);color:var(--mu)}
 .fs>.f{padding:4px 0 14px 24px}
 @media (max-width:480px){.fs>.f{padding-left:0}}
@@ -417,9 +425,9 @@ const CF=[
  ["Trabalho, renda e banco",[["admissao","Data de admissão","date"],["renda","Renda (R$)","money"],["tipoRenda","Tipo de renda",TREN],["agencia","Agência","text"],["operacao","Operação","text"],["conta","Conta","text"]]],
  ["FGTS e financiamento",[["fgts","Tem FGTS?",SN],["fgtsValor","Valor do FGTS (R$)","money"],["pis","PIS","text"],["usarSaldo","Usar saldo?",SN],["saldoValor","Valor a usar (R$)","money"],["financAtivo","Financiamento ativo?",SN],["jaFinanc","Já teve financiamento?",SN],["subsidio","Já recebeu subsídio?",SN]]],
  ["Dependente",[["dep_nome","Nome","text",1],["dep_cpf","CPF","cpf"],["dep_rg","RG","text"],["dep_nasc","Data de nascimento","date"],["dep_profissao","Profissão","text"],["dep_escolaridade","Escolaridade",ESC],["dep_fone","Telefone","tel"],["dep_email","E-mail","email"]]],
- ["Simulação e processo",[["simulacao","Simulação","text"],["valorCasa","Valor da casa (R$)","money"],["local","Local","text"],["modelo","Modelo","text"],["tamanho","Tamanho","text"],["analise","Análise","text"],["entrevista","Entrevista","text"],["condicionou","Condicionou","text"],["dataProc","Data","date"]]],
+ ["Simulação e processo",[["simulacao","Valor da simulação (R$)","money"],["valorCasa","Valor da casa (R$)","money"],["valorSubsidio","Subsídio (R$)","money"],["entrada","Entrada (R$)","money"],["tamanho","Tamanho","text"],["analise","Análise","text"],["entrevista","Entrevista","text"],["condicionou","Condicionou","text"],["dataProc","Data","date"],["local2","Local","text"],["local","Local","text"],["modelo","Modelo","text"]]],
  ["Atendimento",[["status","Situação",SC],["objetivo","Objetivo",OBJ],["tipo","Tipo de imóvel",["",...TIPOS]],["orcamento","Orçamento (R$)","money"],["bairros","Bairros de interesse","text",1],["obs","Observações","area",1]]]];
-const CFF=CF.flatMap(s=>s[1]),CFL=Object.fromEntries(CFF.map(f=>[f[0],f]));
+const CFF=CF.flatMap(s=>s[1]).filter(f=>f[0][0]!="_"),CFL=Object.fromEntries(CFF.map(f=>[f[0],f]));
 const dBR=v=>{const m=String(v||"").match(/^(\d{4})-(\d{2})-(\d{2})/);return m?`${m[3]}/${m[2]}/${m[1]}`:v||""};
 const fmtV=(f,v)=>v==null||v===""?"":f[2]=="date"?dBR(v):f[2]=="money"?money(v):String(v);
 const onlyD=s=>String(s||"").replace(/\D/g,"");
@@ -427,7 +435,12 @@ const mask={cpf:v=>{const d=onlyD(v).slice(0,11);return d.replace(/(\d{3})(\d)/,
  cep:v=>{const d=onlyD(v).slice(0,8);return d.length>5?d.slice(0,5)+"-"+d.slice(5):d},
  tel:v=>{const d=onlyD(v).replace(/^55(?=\d{10,11}$)/,"").slice(0,11);return d.length<3?d:d.length<7?`(${d.slice(0,2)}) ${d.slice(2)}`:d.length<11?`(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`:`(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}`}};
 function cpfOk(v){const d=onlyD(v);if(d.length!=11||/^(\d)\1+$/.test(d))return false;const c=n=>{let s=0;for(let i=0;i<n;i++)s+=+d[i]*(n+1-i);const r=s*10%11%10;return r};return c(9)==+d[9]&&c(10)==+d[10]}
-function fieldH(f,v){const [k,l,t,full]=f,id="c_"+k,cls=full?"full":"";
+/* FGTS? Sim / Não ao lado do título "Dados pessoais", como no documento de cadastro */
+function fgtsQ(v){const b=o=>`<span class="yn" role="checkbox" tabindex="0" aria-checked="${v==o}" data-v="${o}" onclick="ynPick(event,'${o}')" onkeydown="if(event.key==' '||event.key=='Enter')ynPick(event,'${o}')"><i></i>${o}</span>`;
+ return `<span class="fgq" onclick="event.preventDefault();event.stopPropagation()"><b>FGTS?</b>${b("Sim")}${b("Não")}</span>`}
+function ynPick(e,o){e.preventDefault();e.stopPropagation();const h=$("#c_fgts"),nv=h.value==o?"":o;h.value=nv;
+ document.querySelectorAll(".fgq .yn").forEach(x=>x.setAttribute("aria-checked",x.dataset.v==nv))}
+function fieldH(f,v){const [k,l,t,full]=f,id="c_"+k,cls=full?"full":"";if(k=="fgts")return `<input type="hidden" id="c_fgts" value="${esc(v)}">`;if(k[0]=="_")return `<div aria-hidden="true"></div>`;
  if(Array.isArray(t))return `<div class="${cls}"><label for="${id}">${l}</label><select id="${id}">${t[0]===""?`<option value="">—</option>`+opts(t.slice(1),v):`<option value="">—</option>`+opts(t,v)}</select></div>`;
  if(t=="area")return `<div class="${cls}"><label for="${id}">${l}</label><textarea id="${id}" rows="3">${esc(v)}</textarea></div>`;
  const it=t=="money"?`type="number" step="0.01" inputmode="decimal"`:t=="date"?`type="date"`:t=="email"?`type="email"`:t=="tel"?`type="tel" inputmode="tel" oninput="this.value=mask.tel(this.value)"`:t=="cpf"?`inputmode="numeric" oninput="this.value=mask.cpf(this.value);cpfHint(this)" onblur="cpfHint(this,1)"`:t=="cep"?`inputmode="numeric" oninput="this.value=mask.cep(this.value)"`:`type="text"`;
@@ -450,12 +463,12 @@ function fc(id){const c=D.clients.find(x=>x.id==id)||{status:"Novo contato",obje
  openM(`<h3>${id?"Editar cliente":"Novo cliente"}</h3>
  <div class="scan" id="scan"><div class="scan-t"><b>Preencher a partir de um documento</b><span>Tire uma foto (ou escolha uma imagem/PDF) do RG, CNH, comprovante de residência, holerite, carteira de trabalho… O sistema lê e mostra o que encontrou antes de preencher.</span></div>
  <div class="row" style="margin-top:10px"><label class="btn sm p">${I("scan")}Documento do cliente<input type="file" hidden multiple accept="image/*,application/pdf" onchange="scanDoc(this.files,'');this.value=''"></label><label class="btn sm">${I("scan")}Do dependente<input type="file" hidden multiple accept="image/*,application/pdf" onchange="scanDoc(this.files,'dep_');this.value=''"></label></div><div id="scanr"></div></div>
- <div class="f">${CF.map(([t,fs])=>`<details class="full fs" data-s="${t}" ${openS.has(t)||(id&&filled(c,[t,fs]))?"open":""}><summary>${t}<small>${id&&filled(c,[t,fs])?filled(c,[t,fs])+" preenchido(s)":""}</small></summary><div class="f">${fs.map(f=>fieldH(f,c[f[0]])).join("")}</div></details>`).join("")}
+ <div class="f">${CF.map(([t,fs])=>`<details class="full fs" data-s="${t}" ${openS.has(t)||(id&&filled(c,[t,fs]))?"open":""}><summary>${t}${t=="Dados pessoais"?fgtsQ(c.fgts):""}<small>${id&&filled(c,[t,fs])?filled(c,[t,fs])+" preenchido(s)":""}</small></summary><div class="f">${fs.map(f=>fieldH(f,c[f[0]])).join("")}</div></details>`).join("")}
  ${attEditor("RG, CPF, CNH, comprovantes de renda e de residência, carteira de trabalho, extrato do FGTS, contratos…")}</div>${actions("sc",id,"clients")}`);drawAtt()}
 function sc(){const nome=$("#c_nome").value.trim();if(!nome){$("#c_nome").closest("details").open=true;$("#c_nome").focus();return alert("Informe o nome.")}
  if(SCAN&&SCAN.busy)return alert("Espere a leitura do documento terminar.");
  const att=attOut();if(!att)return;
- const o={id:FA.id,att};for(const [k,,t] of CFF){let v=$("#c_"+k).value;if(typeof v=="string")v=v.trim();o[k]=v}
+ const o={id:FA.id,att};for(const [k,,t] of CFF){if(k[0]=="_")continue;let v=$("#c_"+k).value;if(typeof v=="string")v=v.trim();o[k]=v}
  SCAN=null;finishFA();closeM();put("clientes",o)}
 
 /* ===== leitura de documentos ===== */
