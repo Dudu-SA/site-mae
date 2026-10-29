@@ -9,12 +9,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Montserrat:wght@400;500&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
 <style>
-:root{color-scheme:light dark;
+:root{color-scheme:light;
 --paper:#f4f3f1;--sheet:#fff;--soft:#ebe9e6;--ink:#161616;--ink2:#454545;--mu:#7b7b7b;--line:#e3e1dd;--line2:#cfccc7;
 --ac:#e8611c;--act:#c4500f;--onac:#fff;--ok:#3f7a3a;--warn:#b07415;--info:#3b5f86;--bad:#b3341f;--band:#141414;
 --serif:"Zilla Slab",Rockwell,Georgia,serif;--wide:"Montserrat",var(--sans);--sans:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
-@media (prefers-color-scheme:dark){:root{--paper:#111;--sheet:#1a1a1a;--soft:#252525;--ink:#f0efed;--ink2:#c8c6c2;--mu:#959390;--line:#2a2a2a;--line2:#3d3d3d;
---ac:#ff7a33;--act:#ff8a4a;--onac:#1a0d05;--ok:#8fc98a;--warn:#e7b65a;--info:#8fb3db;--bad:#f08a76;--band:#0b0b0b}}
+
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 var(--sans);padding-bottom:calc(72px + env(safe-area-inset-bottom,0px));-webkit-font-smoothing:antialiased}
 button,input,select,textarea{font:inherit;color:inherit}
@@ -166,7 +165,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--ink);box-shadow:0 0 0
 /* mapa e diversos */
 #lmap{height:480px;margin-top:20px;border:1px solid var(--line);border-radius:6px;overflow:hidden;position:relative;z-index:0}
 .leaflet-popup-content-wrapper{border-radius:6px;background:var(--sheet);color:var(--ink);font-family:var(--sans)}.leaflet-popup-tip{background:var(--sheet)}
-@media (prefers-color-scheme:dark){.leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.85) contrast(.9) saturate(.6)}}
+
 .pn{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--ac);color:#fff;border:2px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.3)}.pn .ic{width:15px;height:15px}
 .box{max-width:400px;margin:30px 0}.box label{display:block;margin:14px 0 4px;font-size:13px;font-weight:500;color:var(--ink2)}
 .spin{width:22px;height:22px;border:2px solid var(--line2);border-top-color:var(--ink);border-radius:50%;animation:sp .8s linear infinite;display:inline-block;vertical-align:middle;margin-right:10px}@keyframes sp{to{transform:rotate(360deg)}}
