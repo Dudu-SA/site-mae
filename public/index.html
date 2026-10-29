@@ -127,7 +127,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--ink);box-shadow:0 0 0
 .gal .pl{position:absolute;inset:0;display:grid;place-items:center;color:#fff;background:rgba(0,0,0,.25)}
 .gal .pl .ic{width:26px;height:26px;fill:#fff;stroke:none}
 .docs{border-top:1px solid var(--line)}
-.doc{display:flex;align-items:center;gap:12px;padding:10px 2px;border-bottom:1px solid var(--line);text-decoration:none}
+.doc{display:flex;align-items:center;gap:12px;width:100%;padding:10px 2px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;cursor:pointer;text-decoration:none}
 .doc span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .doc small{color:var(--mu);font-size:12px;white-space:nowrap}
 .doc:hover span{text-decoration:underline;text-underline-offset:3px}
@@ -239,10 +239,10 @@ input.hl,select.hl{border-color:var(--ok);background:color-mix(in srgb,var(--ok)
 const TIPOS=["Casa","Apartamento","Terreno","Comercial","Sítio"],SH=["Disponível","Reservado","Vendido","Alugado"],SC=["Novo contato","Em atendimento","Visita marcada","Negociando","Fechado","Perdido"],OBJ=["Comprar","Alugar"];
 const IC={Casa:"home",Apartamento:"building",Terreno:"plot",Comercial:"store",Sítio:"tree"};
 const SCOL={"Disponível":"var(--ok)","Reservado":"var(--warn)","Vendido":"var(--mu)","Alugado":"var(--info)","Novo contato":"var(--info)","Em atendimento":"var(--warn)","Visita marcada":"var(--ac)","Negociando":"var(--warn)","Fechado":"var(--ok)","Perdido":"var(--bad)"};
-const MAXMB=50;
+const MAXMB=15; /* limite por arquivo depois de comprimir (fotos são reduzidas automaticamente) */
 /* leitura de documentos (Firebase AI Logic). Tenta os modelos na ordem; troque se o Google lançar outro. */
-window.AI_MODELS=["gemini-3.5-flash","gemini-3.6-flash","gemini-3.5-flash-lite","gemini-2.5-flash"];
-window.AI_BACKEND="vertex"; /* "vertex" (Vertex AI / Agent Platform, plano Blaze) ou "google" (Gemini Developer API) */
+window.AI_MODELS=["gemini-3.5-flash","gemini-3.5-flash-lite","gemini-3.6-flash","gemini-2.5-flash"];
+window.AI_BACKEND="google"; /* "google" = Gemini Developer API, cota gratuita no plano Spark */
 let D={houses:[],clients:[]},tab="i",F={h:{q:"",t:"",s:""},c:{q:"",s:"",o:""}},U,FAIL=null,LM=null,OPEN=null,FA=null,AT={};
 const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const I=(n,c="")=>`<svg class="ic ${c}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
@@ -262,8 +262,10 @@ window.onFail=e=>{FAIL=e||{};render()};
 const KEY=c=>c=="imoveis"?"houses":"clients";
 window.put=(c,o)=>{const k=KEY(c),i=D[k].findIndex(x=>x.id==o.id);i<0?D[k].unshift(o):D[k][i]=o;render()};
 window.rm=(c,id)=>{D[KEY(c)]=D[KEY(c)].filter(x=>x.id!=id);render()};
-window.upload=(rel,file,onp)=>new Promise(res=>{let p=0;const t=setInterval(()=>{p+=.25;onp(Math.min(p,1));if(p>=1){clearInterval(t);res({url:URL.createObjectURL(file),path:"demo/"+rel})}},150)});
-window.unload=()=>{};
+const MEM={};
+window.upload=(id,blob,onp)=>new Promise(res=>{let p=0;const t=setInterval(()=>{p+=.25;onp(Math.min(p,1));if(p>=1){clearInterval(t);MEM[id]=blob;res({path:"mem:"+id})}},150)});
+window.unload=p=>{if(p&&p.startsWith("mem:"))delete MEM[p.slice(4)]};
+window.fetchBlob=async a=>MEM[a.path.slice(4)];
 window.lerDoc=()=>new Promise(r=>setTimeout(()=>r({tipoDocumento:"RG (exemplo do modo demonstração)",nome:"JOSÉ CARLOS DA SILVA",cpf:"52998224725",rg:"2009123456 SSP/CE",nasc:"14/03/1988",cidade:"Fortaleza",estado:"CE",avisos:"Modo demonstração: estes dados são fictícios, o documento não foi lido de verdade."}),1400));
 window.logout=()=>location.reload();
 setTimeout(()=>{if(U===undefined&&!FAIL)window.onFail({code:"tempo esgotado",message:"A conexão demorou demais."})},8000);
@@ -302,10 +304,20 @@ function homeV(){const H=D.houses,C=D.clients,vis=C.filter(c=>c.status=="Visita 
  <div class="sec"><h2>Últimos imóveis</h2><button class="lnk" onclick="go('h')">ver todos</button></div>
  ${H.length?H.slice(0,6).map(h=>ln(h,"h",h.titulo||"Sem título",esc([h.tipo,h.bairro].filter(Boolean).join(" · "))+" · "+st(h.status),money(h.preco))).join(""):`<p class="empty">Nada cadastrado ainda. Comece pelo botão “Imóvel”.</p>`}`}
 
+/* arquivos: fotos são reduzidas antes de enviar; miniaturas ficam junto do cadastro */
+async function shrink(f,max,q){const bmp=await createImageBitmap(f),k=Math.min(1,max/Math.max(bmp.width,bmp.height)),c=document.createElement("canvas");c.width=Math.round(bmp.width*k);c.height=Math.round(bmp.height*k);
+ const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(bmp,0,0,c.width,c.height);return await new Promise(r=>c.toBlob(r,"image/jpeg",q))}
+const b2url=b=>new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.readAsDataURL(b)});
+const URLS={};
+async function fileURL(a){if(a.url)return a.url;if(URLS[a.id])return URLS[a.id];const b=await window.fetchBlob(a);if(!b)throw new Error("arquivo não encontrado");return URLS[a.id]=URL.createObjectURL(b.type?b:new Blob([b],{type:a.tipo}))}
+async function openDoc(id){const a=AT[id];if(!a)return;const viewable=/pdf|^image\/|^video\/|^text\//.test(a.tipo);
+ const w=viewable?window.open("","_blank"):null;if(w)w.document.write("<p style='font:16px sans-serif;padding:20px'>Abrindo "+esc(a.nome)+"…</p>");
+ try{const u=await fileURL(a);if(w){w.location.href=u}else{const l=document.createElement("a");l.href=u;l.download=a.nome;document.body.appendChild(l);l.click();l.remove()}}
+ catch(e){if(w)w.close();alert("Não consegui abrir o arquivo: "+(e.code||e.message))}}
 function attIcon(a){(a.att||[]).forEach(x=>AT[x.id]=x);const n=(a.att||[]).length;return n?`<span class="clip" title="${n} anexo(s)">${I("clip")}${n}</span>`:""}
 function attView(att){att=att||[];if(!att.length)return"";const m=att.filter(isMed),d=att.filter(a=>!isMed(a));
- return (m.length?`<div class="lbl">Fotos e vídeos</div><div class="gal">${m.map(a=>`<button type="button" onclick="openV('${a.id}')" aria-label="${esc(a.nome)}">${isImg(a)?`<img src="${esc(a.url)}" alt="" loading="lazy">`:`<video src="${esc(a.url)}#t=0.5" preload="metadata" muted></video><span class="pl">${I("play")}</span>`}</button>`).join("")}</div>`:"")
- +(d.length?`<div class="lbl">Documentos</div><div class="docs">${d.map(a=>`<a class="doc" href="${esc(a.url)}" target="_blank" rel="noopener">${I("file")}<span>${esc(a.nome)}</span><small>${ext(a.nome)} · ${fsz(a.tam)}</small></a>`).join("")}</div>`:"")}
+ return (m.length?`<div class="lbl">Fotos e vídeos</div><div class="gal">${m.map(a=>`<button type="button" onclick="openV('${a.id}')" aria-label="${esc(a.nome)}">${a.thumb||a.url&&isImg(a)?`<img src="${esc(a.thumb||a.url)}" alt="" loading="lazy">`:`<span class="pl" style="background:var(--soft);color:var(--mu)">${I("video")}</span>`}${isVid(a)?`<span class="pl">${I("play")}</span>`:""}</button>`).join("")}</div>`:"")
+ +(d.length?`<div class="lbl">Documentos</div><div class="docs">${d.map(a=>`<button type="button" class="doc" onclick="openDoc('${a.id}')">${I("file")}<span>${esc(a.nome)}</span><small>${ext(a.nome)} · ${fsz(a.tam)}</small></button>`).join("")}</div>`:"")}
 const kv=pairs=>{const p=pairs.filter(x=>x[1]);return p.length?`<div class="kv">${p.map(([k,v])=>`<div><small>${k}</small>${v}</div>`).join("")}</div>`:""};
 function item(o,thumb,title,meta,right,body){return `<div class="it${OPEN==o.id?" open":""}" data-id="${o.id}" role="button" tabindex="0" aria-expanded="${OPEN==o.id}" onclick="tg(this)" onkeydown="kd(event,this)">${thumb}<div class="tx"><h3>${title}</h3><div class="meta">${meta}${attIcon(o)}</div></div><div class="rt">${right}</div><div class="dt"><div><div class="dd" onclick="event.stopPropagation()">${body}</div></div></div></div>`}
 
@@ -313,8 +325,8 @@ function housesV(){const f=F.h,q=f.q.toLowerCase();
  const L=D.houses.filter(h=>(!f.t||h.tipo==f.t)&&(!f.s||h.status==f.s)&&(!q||[h.titulo,h.endereco,h.bairro,h.cidade,h.dono,h.obs].join(" ").toLowerCase().includes(q)));
  return `<div class="fc"><input id="q" type="search" placeholder="Buscar por título, bairro, proprietário…" value="${esc(f.q)}" oninput="F.h.q=this.value;keep()"><select onchange="F.h.t=this.value;render()">${opts(TIPOS,f.t,"Todos os tipos")}</select><select onchange="F.h.s=this.value;render()">${opts(SH,f.s,"Qualquer situação")}</select></div>
  ${(f.q||f.t||f.s)?`<p class="count">${L.length} resultado(s) · <button class="lnk" onclick="F.h={q:'',t:'',s:''};render()">limpar filtros</button></p>`:""}
- ${L.length?L.map(h=>{const im=(h.att||[]).find(isImg);
-  return item(h,`<div class="th">${im?`<img src="${esc(im.url)}" alt="" loading="lazy">`:I(IC[h.tipo]||"home")}</div>`,esc(h.titulo||"Sem título"),esc([h.tipo,h.bairro].filter(Boolean).join(" · ")),`<div class="pr">${money(h.preco)}</div>${st(h.status)}`,
+ ${L.length?L.map(h=>{const im=(h.att||[]).find(a=>isImg(a)&&(a.thumb||a.url));
+  return item(h,`<div class="th">${im?`<img src="${esc(im.thumb||im.url)}" alt="" loading="lazy">`:I(IC[h.tipo]||"home")}</div>`,esc(h.titulo||"Sem título"),esc([h.tipo,h.bairro].filter(Boolean).join(" · ")),`<div class="pr">${money(h.preco)}</div>${st(h.status)}`,
   kv([["Endereço",esc([h.endereco,h.bairro,h.cidade].filter(Boolean).join(", "))],["Área",h.area?esc(h.area)+" m²":""],["Quartos",esc(h.quartos)],["Proprietário",esc(h.dono)],["Telefone",esc(h.fone)]])
   +(h.obs?`<p class="obs">${esc(h.obs)}</p>`:"")+attView(h.att)
   +`<div class="row">${h.ll?`<a class="btn sm" target="_blank" rel="noopener" href="https://www.google.com/maps?q=${h.ll[0]},${h.ll[1]}">${I("pin")}Abrir no Maps</a>`:""}${h.fone?`<a class="btn sm" target="_blank" rel="noopener" href="https://wa.me/55${String(h.fone).replace(/\D/g,"")}">${I("chat")}Proprietário</a>`:""}<button class="btn sm p" onclick="fh('${h.id}')">${I("edit")}Editar</button></div>`)}).join(""):`<p class="empty">Nenhum imóvel encontrado.</p>`}`}
@@ -330,32 +342,38 @@ const tg=e=>{e.setAttribute("aria-expanded",e.classList.toggle("open"))},kd=(e,t
 let LF;function openM(h){LF=document.activeElement;$("#mb").innerHTML=h;$("#m").classList.add("on");setTimeout(()=>$("#mb").focus(),40)}
 function closeM(){SCAN=null;if(FA)cancelFA();$("#m").classList.remove("on");if(LF&&LF.focus)LF.focus()}
 $("#m").onmousedown=e=>{if(e.target.id=="m")closeM()};
-function openV(id){const a=AT[id];if(!a)return;$("#vw").innerHTML=(isImg(a)?`<img src="${esc(a.url)}" alt="${esc(a.nome)}">`:`<video src="${esc(a.url)}" controls autoplay playsinline></video>`)+`<div class="bt"><span>${esc(a.nome)}</span><a class="btn sm" href="${esc(a.url)}" target="_blank" rel="noopener">${I("ext")}Original</a><button class="btn sm" onclick="closeV()">${I("x")}Fechar</button></div>`;$("#vw").classList.add("on")}
+async function openV(id){const a=AT[id];if(!a)return;const vw=$("#vw");vw.innerHTML=`<p style="color:#ddd"><span class="spin"></span>Carregando…</p>`;vw.classList.add("on");
+ let u;try{u=await fileURL(a)}catch(e){vw.innerHTML=`<p style="color:#f99">Não consegui abrir: ${esc(e.code||e.message)}</p><div class="bt"><button class="btn sm" onclick="closeV()">Fechar</button></div>`;return}
+ if(!vw.classList.contains("on"))return;
+ vw.innerHTML=(isImg(a)?`<img src="${esc(u)}" alt="${esc(a.nome)}">`:`<video src="${esc(u)}" controls autoplay playsinline></video>`)+`<div class="bt"><span>${esc(a.nome)}</span><a class="btn sm" href="${esc(u)}" download="${esc(a.nome)}">Baixar</a><button class="btn sm" onclick="closeV()">${I("x")}Fechar</button></div>`}
 function closeV(){$("#vw").classList.remove("on");setTimeout(()=>{if(!$("#vw").classList.contains("on"))$("#vw").innerHTML=""},200)}
 document.addEventListener("keydown",e=>{if(e.key=="Escape"){$("#vw").classList.contains("on")?closeV():closeM()}});
 document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>go(b.dataset.t));
 
 /* anexos no formulário */
 function attEditor(hint){return `<div class="fh">Documentos e mídia</div><div class="full att" id="att" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="event.preventDefault();this.classList.remove('drag');addF(event.dataTransfer.files)">
- <p class="hint">${hint} Até ${MAXMB} MB por arquivo. No computador, dá para arrastar os arquivos para cá.</p>
+ <p class="hint">${hint} Fotos são reduzidas automaticamente; documentos e vídeos até ${MAXMB} MB. No computador, dá para arrastar os arquivos para cá.</p>
  <div class="row" style="margin-top:10px"><label class="btn sm">${I("image")}Foto ou vídeo<input type="file" hidden multiple accept="image/*,video/*" onchange="addF(this.files);this.value=''"></label><label class="btn sm">${I("file")}Documento<input type="file" hidden multiple accept=".pdf,.doc,.docx,.odt,.rtf,.txt,.xls,.xlsx,.ods,.csv,image/*" onchange="addF(this.files);this.value=''"></label></div>
  <div id="al"></div></div>`}
 function startFA(col,rec){FA={col,id:rec.id||uid(),list:(rec.att||[]).map(a=>({...a,st:"ok"})),added:[],removed:[],dead:false}}
 function addF(files){const fa=FA;if(!fa)return;for(const f of files){
- if(f.size>MAXMB*1048576){alert(`“${f.name}” tem ${fsz(f.size)}. O limite é ${MAXMB} MB.`);continue}
- const a={id:uid(),nome:f.name,tipo:f.type||"",tam:f.size,st:"up",pct:0,prev:/^image\//.test(f.type)?URL.createObjectURL(f):""};
+ const img=/^image\/(jpeg|png|webp|heic|heif|bmp)/i.test(f.type);
+ if(!img&&f.size>MAXMB*1048576){alert(`“${f.name}” tem ${fsz(f.size)}. O limite é ${MAXMB} MB${/^video/.test(f.type)?" — grave um vídeo mais curto ou envie pelo WhatsApp":""}.`);continue}
+ const a={id:uid(),nome:f.name,tipo:f.type||"",tam:f.size,st:"up",pct:0,prev:img?URL.createObjectURL(f):""};
  fa.list.push(a);fa.added.push(a.id);
- const safe=f.name.normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^\w.\-]+/g,"_").slice(-80);
- window.upload(`${fa.col}/${fa.id}/${a.id}-${safe}`,f,p=>{a.pct=p;if(FA===fa)drawAtt()})
-  .then(r=>{if(fa.dead){window.unload(r.path);return}a.url=r.url;a.path=r.path;a.st="ok";if(FA===fa)drawAtt()})
-  .catch(e=>{console.error(e);a.st="err";a.err=e.code=="storage/unauthorized"?"sem permissão (regras do Storage)":e.code=="storage/unknown"||e.code=="storage/bucket-not-found"?"o Storage está ativado no Firebase?":(e.code||e.message||"erro");if(FA===fa)drawAtt()})}
+ (async()=>{let blob=f;
+  if(img){try{blob=await shrink(f,2000,.82);a.tipo="image/jpeg";if(!/\.jpe?g$/i.test(a.nome))a.nome=a.nome.replace(/\.[^.]+$/,"")+".jpg";a.thumb=await b2url(await shrink(f,240,.6))}catch(e){console.warn(e);blob=f}}
+  a.tam=blob.size;if(blob.size>MAXMB*1048576)throw {message:`continua grande demais (${fsz(blob.size)})`};
+  const r=await window.upload(a.id,blob,p=>{a.pct=p;if(FA===fa)drawAtt()});
+  if(fa.dead){window.unload(r.path);return}a.path=r.path;a.st="ok";if(FA===fa)drawAtt()})()
+  .catch(e=>{console.error(e);a.st="err";a.err=e.code=="permission-denied"?"sem permissão (regras do Firestore)":e.code=="resource-exhausted"?"cota gratuita do dia esgotada, tente amanhã":(e.code||e.message||"erro");if(FA===fa)drawAtt()})}
  drawAtt()}
 function drawAtt(){const el=$("#al");if(!el||!FA)return;
- el.innerHTML=FA.list.map(a=>`<div class="ai"><span class="ait">${isImg(a)&&(a.prev||a.url)?`<img src="${esc(a.prev||a.url)}" alt="">`:I(isVid(a)?"video":"file")}</span><div class="ain"><b>${esc(a.nome)}</b>${a.st=="up"?`<small>Enviando… ${Math.round(a.pct*100)}%</small><i class="bar"><i style="width:${Math.round(a.pct*100)}%"></i></i>`:a.st=="err"?`<small class="err">Não enviou: ${esc(a.err)}</small>`:`<small>${isMed(a)?(isImg(a)?"Foto":"Vídeo"):"Documento"} · ${fsz(a.tam)}</small>`}</div>${a.st=="up"?"<span></span>":`<button type="button" class="x" onclick="rmA('${a.id}')" aria-label="Remover ${esc(a.nome)}">${I("x")}</button>`}</div>`).join("")}
+ el.innerHTML=FA.list.map(a=>`<div class="ai"><span class="ait">${isImg(a)&&(a.prev||a.thumb||a.url)?`<img src="${esc(a.prev||a.thumb||a.url)}" alt="">`:I(isVid(a)?"video":"file")}</span><div class="ain"><b>${esc(a.nome)}</b>${a.st=="up"?`<small>Enviando… ${Math.round(a.pct*100)}%</small><i class="bar"><i style="width:${Math.round(a.pct*100)}%"></i></i>`:a.st=="err"?`<small class="err">Não enviou: ${esc(a.err)}</small>`:`<small>${isMed(a)?(isImg(a)?"Foto":"Vídeo"):"Documento"} · ${fsz(a.tam)}</small>`}</div>${a.st=="up"?"<span></span>":`<button type="button" class="x" onclick="rmA('${a.id}')" aria-label="Remover ${esc(a.nome)}">${I("x")}</button>`}</div>`).join("")}
 function rmA(id){const a=FA.list.find(x=>x.id==id);if(!a)return;FA.list=FA.list.filter(x=>x.id!=id);
  if(a.path){FA.added.includes(id)?window.unload(a.path):FA.removed.push(a.path)}drawAtt()}
 function attOut(){if(FA.list.some(a=>a.st=="up")){alert("Espere os arquivos terminarem de enviar.");return null}
- return FA.list.filter(a=>a.st=="ok").map(({id,nome,tipo,tam,url,path})=>({id,nome,tipo,tam,url,path}))}
+ return FA.list.filter(a=>a.st=="ok").map(({id,nome,tipo,tam,path,thumb,url})=>Object.assign({id,nome,tipo,tam,path},thumb?{thumb}:{},url?{url}:{})).map((x,i,all)=>{/* cadastro tem limite de 1 MB: miniaturas além de ~600 KB somem */let t=0;for(let j=0;j<=i;j++)t+=(all[j].thumb||"").length;if(t>600000)delete x.thumb;return x})}
 function cancelFA(){const fa=FA;FA=null;fa.dead=true;fa.list.forEach(a=>{if(fa.added.includes(a.id)&&a.path)window.unload(a.path)})}
 function finishFA(){const fa=FA;FA=null;fa.removed.forEach(p=>window.unload(p));return fa}
 
@@ -479,9 +497,9 @@ function applyScan(){if(!SCAN)return;let n=0;
 function aiErr(e){const m=(e&&(e.code||"")+" "+(e.message||""))||"";
  if(/demo/i.test(m))return m;
  if(/api-not-enabled|not been used|disabled|SERVICE_DISABLED|firebasevertexai|firebaseml/i.test(m))return "o Firebase AI Logic ainda não foi ativado no projeto (Console do Firebase → AI Logic).";
- if(/app.?check|attestation/i.test(m))return "o App Check bloqueou. Coloque a chave do reCAPTCHA no conexao.js (veja as instruções).";
- if(/quota|429|resource.?exhausted/i.test(m))return "limite de uso atingido. Tente de novo em alguns minutos.";
- if(/billing|blaze/i.test(m))return "o projeto precisa estar no plano Blaze.";
+ if(/app.?check|attestation/i.test(m))return "o App Check bloqueou. Coloque a chave do reCAPTCHA v3 no conexao.js (veja as instruções).";
+ if(/quota|429|resource.?exhausted/i.test(m))return "limite gratuito atingido. Espere um minuto e tente de novo (o limite diário zera no dia seguinte).";
+ if(/billing|blaze/i.test(m))return "este modelo pede plano pago. Troque o primeiro item de AI_MODELS no index.html por um modelo gratuito.";
  return m.slice(0,200)||"erro desconhecido"}
 
 render();
@@ -491,16 +509,21 @@ render();
 const g=id=>document.getElementById(id);
 try{
  const {auth,db}=await import("./conexao.js"),V="https://www.gstatic.com/firebasejs/12.19.0/";
- const A=await import(V+"firebase-auth.js"),S=await import(V+"firebase-firestore.js"),ST=await import(V+"firebase-storage.js");
- const storage=ST.getStorage(auth.app);
+ const A=await import(V+"firebase-auth.js"),S=await import(V+"firebase-firestore.js");
  let un=[];const path=(c,id)=>S.doc(db,"users",auth.currentUser.uid,c,id);
  window.login=async()=>{try{await A.signInWithEmailAndPassword(auth,g("em").value,g("pw").value)}catch(e){alert("E-mail ou senha incorretos.")}};
  window.logout=()=>A.signOut(auth);
  window.put=(c,o)=>S.setDoc(path(c,o.id),o).catch(e=>alert("Erro ao salvar: "+e.code));
  window.rm=(c,id)=>S.deleteDoc(path(c,id)).catch(e=>alert("Erro ao excluir: "+e.code));
- window.upload=(rel,file,onp)=>new Promise((res,rej)=>{
-  const p=`users/${auth.currentUser.uid}/${rel}`,t=ST.uploadBytesResumable(ST.ref(storage,p),file,file.type?{contentType:file.type}:undefined);
-  t.on("state_changed",s=>onp(s.totalBytes?s.bytesTransferred/s.totalBytes:0),rej,async()=>{try{res({url:await ST.getDownloadURL(t.snapshot.ref),path:p})}catch(e){rej(e)}})});
+ /* arquivos guardados no próprio Firestore, em pedaços de até 900 KB (plano gratuito) */
+ const CH=900*1024,fdoc=id=>S.doc(db,"users",auth.currentUser.uid,"arquivos",id);
+ window.upload=async(id,blob,onp)=>{const buf=new Uint8Array(await blob.arrayBuffer()),n=Math.max(1,Math.ceil(buf.length/CH));onp(0);
+  for(let i=0;i<n;i++){await S.setDoc(fdoc(id+"_"+i),{d:S.Bytes.fromUint8Array(buf.subarray(i*CH,(i+1)*CH)),i,n,tipo:blob.type||""});onp((i+1)/n)}
+  return {path:`fs:${id}:${n}`}};
+ window.unload=p=>{const m=/^fs:([^:]+):(\d+)$/.exec(p||"");if(!m)return;for(let i=0;i<+m[2];i++)S.deleteDoc(fdoc(m[1]+"_"+i)).catch(e=>console.warn("não apagou",e.code))};
+ window.fetchBlob=async a=>{const m=/^fs:([^:]+):(\d+)$/.exec(a.path||"");if(!m)return null;
+  const parts=await Promise.all([...Array(+m[2])].map((_,i)=>S.getDoc(fdoc(m[1]+"_"+i)).then(d=>{if(!d.exists())throw new Error("parte do arquivo faltando");return d.data().d.toUint8Array()})));
+  return new Blob(parts,{type:a.tipo||""})};
  window.lerDoc=async files=>{
   const AI=await import(V+"firebase-ai.js"),ai=AI.getAI(auth.app,{backend:window.AI_BACKEND=="google"?new AI.GoogleAIBackend():new AI.VertexAIBackend("global")});
   const props={};for(const [k,d] of Object.entries(DOCF))props[k]=AI.Schema.string({description:d});
@@ -511,7 +534,6 @@ try{
    const r=await model.generateContent([DOC_PROMPT,...parts]);return JSON.parse(r.response.text())
   }catch(e){last=e;console.warn("modelo",m,e);if(!/not.?found|404|is not supported|unsupported model|invalid model/i.test(e.message||""))throw e}}
   throw last};
- window.unload=p=>{if(p&&p.startsWith("users/"))ST.deleteObject(ST.ref(storage,p)).catch(e=>console.warn("não apagou",p,e.code))};
  A.onAuthStateChanged(auth,u=>{un.forEach(f=>f());un=[];window.onAuth(u);
   if(u)[["imoveis","houses"],["clientes","clients"]].forEach(([c,k])=>un.push(S.onSnapshot(S.collection(db,"users",u.uid,c),s=>window.onData(k,s.docs.map(d=>d.data())),e=>window.onFail(e))))},e=>window.onFail(e));
 }catch(e){console.error(e);window.onFail(e)}
