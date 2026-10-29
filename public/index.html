@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="pt-BR"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#f5f2ec" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#191814" media="(prefers-color-scheme: dark)">
-<title>Caderno de imóveis</title>
+<meta name="theme-color" content="#141414">
+<title>Darling Soares · Corretora de Imóveis</title>
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Montserrat:wght@400;500&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
 <style>
 :root{color-scheme:light dark;
---paper:#f5f2ec;--sheet:#fffdf9;--soft:#ece6db;--ink:#1f1d19;--ink2:#4a463f;--mu:#7a7468;--line:#e2dccf;--line2:#cfc6b6;
---ac:#9c4a2c;--ok:#4f6b3d;--warn:#a6761b;--info:#3d5a7a;--bad:#a33b2b;
---serif:"Newsreader",Georgia,"Times New Roman",serif;--sans:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
-@media (prefers-color-scheme:dark){:root{--paper:#191814;--sheet:#211f1b;--soft:#2c2924;--ink:#ece7dd;--ink2:#c9c2b5;--mu:#968f82;--line:#33302a;--line2:#4a453d;
---ac:#dc8f6c;--ok:#a3bf8f;--warn:#dcb465;--info:#93b2d1;--bad:#e48c7c}}
+--paper:#f4f3f1;--sheet:#fff;--soft:#ebe9e6;--ink:#161616;--ink2:#454545;--mu:#7b7b7b;--line:#e3e1dd;--line2:#cfccc7;
+--ac:#e8611c;--act:#c4500f;--onac:#fff;--ok:#3f7a3a;--warn:#b07415;--info:#3b5f86;--bad:#b3341f;--band:#141414;
+--serif:"Zilla Slab",Rockwell,Georgia,serif;--wide:"Montserrat",var(--sans);--sans:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+@media (prefers-color-scheme:dark){:root{--paper:#111;--sheet:#1a1a1a;--soft:#252525;--ink:#f0efed;--ink2:#c8c6c2;--mu:#959390;--line:#2a2a2a;--line2:#3d3d3d;
+--ac:#ff7a33;--act:#ff8a4a;--onac:#1a0d05;--ok:#8fc98a;--warn:#e7b65a;--info:#8fb3db;--bad:#f08a76;--band:#0b0b0b}}
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 var(--sans);padding-bottom:calc(72px + env(safe-area-inset-bottom,0px));-webkit-font-smoothing:antialiased}
 button,input,select,textarea{font:inherit;color:inherit}
@@ -23,22 +24,31 @@ a{color:inherit}
 .wrap{max-width:780px;margin:0 auto;padding:0 20px}
 
 /* topo */
-.top{display:flex;align-items:center;gap:14px;padding-top:calc(16px + env(safe-area-inset-top,0px));font-size:13px;color:var(--mu)}
-.brand{font:italic 400 19px var(--serif);color:var(--ink)}
-.top .who{margin-left:auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.top button{background:none;border:0;padding:6px 0;color:var(--ink2);cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line2)}
-.top button:hover{color:var(--ac)}
-.head{display:flex;align-items:flex-end;gap:12px 16px;flex-wrap:wrap;padding:30px 0 18px;border-bottom:1px solid var(--ink)}
-.eyebrow{display:block;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--mu)}
-h1{font:400 clamp(36px,8vw,52px)/1.02 var(--serif);letter-spacing:-.015em;margin:6px 0 0}
+.band{background:var(--band);color:#bdbdbd;border-bottom:3px solid var(--ac)}
+.top{display:flex;align-items:center;gap:14px;padding:calc(10px + env(safe-area-inset-top,0px)) 0 10px;font-size:13px}
+.brand{display:flex;align-items:center;gap:12px;color:#fff;text-decoration:none}
+.brand img{height:40px;width:auto;display:block}
+.brand b{display:block;font:600 19px/1 var(--serif);letter-spacing:.01em;color:#fff}
+.brand small{display:block;margin-top:4px;font:400 10px var(--wide);letter-spacing:.28em;color:#a9a9a9;text-transform:uppercase}
+.top .who{margin-left:auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#9a9a9a}
+.top button{background:none;border:1px solid #3a3a3a;border-radius:5px;padding:6px 12px;color:#ddd;cursor:pointer;font-size:13px}
+.top button:hover{border-color:var(--ac);color:#fff}
+@media (max-width:520px){.top .who{display:none}.top button{margin-left:auto}.brand img{height:34px}.brand b{font-size:17px}}
+.head{display:flex;align-items:flex-end;gap:12px 16px;flex-wrap:wrap;padding:28px 0 18px;border-bottom:2px solid var(--ink)}
+.eyebrow{display:block;font:500 11px var(--wide);letter-spacing:.24em;text-transform:uppercase;color:var(--act)}
+h1{font:600 clamp(34px,8vw,50px)/1.02 var(--serif);letter-spacing:-.01em;margin:8px 0 0}
 .head .act{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
 .out .top .who,.out .top button,.out .nav{display:none}
+.out .band{display:none}
+.biglogo{display:block;width:min(300px,72vw);height:auto;margin:6vh auto 8px}
+.out .head{justify-content:center;text-align:center;border-bottom:0;padding-top:10px}
+.out .box{margin-left:auto;margin-right:auto}
 
 /* navegação */
 .nav{position:fixed;left:0;right:0;bottom:0;z-index:10;display:flex;justify-content:center;background:var(--sheet);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
 .nav button{flex:1;max-width:150px;background:none;border:0;border-top:2px solid transparent;margin-top:-1px;padding:9px 0 8px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;color:var(--mu);cursor:pointer}
 .nav button .ic{width:20px;height:20px}
-.nav button.on{color:var(--ink);border-top-color:var(--ac)}
+.nav button.on{color:var(--act);border-top-color:var(--ac)}
 @media (min-width:860px){
  body{padding-bottom:40px}
  .nav{position:static;justify-content:flex-start;gap:26px;background:none;border:0;max-width:780px;margin:0 auto;padding:10px 20px 0}
@@ -50,8 +60,8 @@ h1{font:400 clamp(36px,8vw,52px)/1.02 var(--serif);letter-spacing:-.015em;margin
 /* botões e campos */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:40px;padding:0 15px;border:1px solid var(--line2);background:var(--sheet);color:var(--ink);border-radius:5px;font-size:14px;font-weight:500;cursor:pointer;text-decoration:none;white-space:nowrap}
 .btn:hover{border-color:var(--ink2)}
-.btn.p{background:var(--ink);border-color:var(--ink);color:var(--paper)}
-.btn.p:hover{background:var(--ac);border-color:var(--ac)}
+.btn.p{background:var(--ac);border-color:var(--ac);color:var(--onac);font-weight:600}
+.btn.p:hover{background:var(--act);border-color:var(--act)}
 .btn.d{background:none;border-color:transparent;color:var(--bad);margin-left:auto}
 .btn.d:hover{text-decoration:underline}
 .btn.sm{min-height:34px;padding:0 12px;font-size:13px}
@@ -67,18 +77,18 @@ input:focus,select:focus,textarea:focus{border-color:var(--ink);box-shadow:0 0 0
 .stats{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--line)}
 .stats>div{padding:20px 0 18px 18px;border-left:1px solid var(--line)}
 .stats>div:first-child{padding-left:0;border-left:0}
-.stats b{display:block;font:400 42px/1 var(--serif);font-variant-numeric:lining-nums}
+.stats b{display:block;font:600 42px/1 var(--serif);color:var(--ink);font-variant-numeric:lining-nums}
 .stats span{font-size:13px;color:var(--mu)}
 .sec{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:36px 0 0;padding-bottom:8px;border-bottom:1px solid var(--line)}
-.sec h2{margin:0;font:500 21px var(--serif)}
+.sec h2{margin:0;font:600 21px var(--serif)}
 .types{display:flex;flex-wrap:wrap;gap:4px 20px;margin-top:12px}
 .types button{background:none;border:0;padding:4px 0;font-size:14px;color:var(--ink2);cursor:pointer}
 .types button:hover{color:var(--ac)}
 .types small{color:var(--mu);margin-left:5px;font-variant-numeric:tabular-nums}
 .ln{display:grid;grid-template-columns:1fr auto;gap:2px 16px;width:100%;padding:13px 0;background:none;border:0;border-bottom:1px solid var(--line);text-align:left;cursor:pointer}
-.ln>span{font:500 17px/1.3 var(--serif)}
+.ln>span{font:600 17px/1.3 var(--serif)}
 .ln small{grid-column:1;font-size:13px;color:var(--mu)}
-.ln b{grid-row:1/3;grid-column:2;align-self:center;font:400 16px var(--serif);text-align:right}
+.ln b{grid-row:1/3;grid-column:2;align-self:center;font:600 16px var(--serif);text-align:right}
 .ln:hover>span{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
 .empty{padding:28px 0;color:var(--mu)}
 
@@ -87,15 +97,15 @@ input:focus,select:focus,textarea:focus{border-color:var(--ink);box-shadow:0 0 0
 .fc input{flex:2 1 200px;width:auto}.fc select{flex:1 1 140px;width:auto}
 .count{font-size:13px;color:var(--mu);margin:14px 0 0}
 .it{display:grid;grid-template-columns:52px 1fr auto;gap:0 16px;align-items:center;padding:16px 0;border-bottom:1px solid var(--line);cursor:pointer}
-.th{width:52px;height:52px;border-radius:4px;background:var(--soft);color:var(--ink2);display:grid;place-items:center;overflow:hidden;font:400 22px var(--serif)}
+.th{width:52px;height:52px;border-radius:4px;background:var(--soft);color:var(--ink2);display:grid;place-items:center;overflow:hidden;font:600 20px var(--serif)}
 .th img{width:100%;height:100%;object-fit:cover;display:block}
 .th .ic{width:22px;height:22px}
 .tx{min-width:0}
-.it h3{margin:0;font:500 18px/1.25 var(--serif);overflow-wrap:anywhere}
+.it h3{margin:0;font:600 18px/1.25 var(--serif);overflow-wrap:anywhere}
 .it:hover h3{text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
 .meta{font-size:13px;color:var(--mu)}
 .rt{text-align:right}
-.pr{font:400 17px var(--serif);white-space:nowrap}
+.pr{font:600 17px var(--serif);white-space:nowrap}
 .st{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--sc,var(--mu));white-space:nowrap}
 .st::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
 .clip{display:inline-flex;align-items:center;gap:3px;margin-left:8px;color:var(--mu)}
@@ -140,12 +150,12 @@ input:focus,select:focus,textarea:focus{border-color:var(--ink);box-shadow:0 0 0
 .m,.vw{position:fixed;inset:0;z-index:20;display:flex;justify-content:center;align-items:flex-start;overflow:auto;padding:6vh 12px 24px;background:rgba(24,20,14,.45);opacity:0;visibility:hidden;transition:opacity .15s,visibility .15s}
 .m.on,.vw.on{opacity:1;visibility:visible}
 .m>div{width:100%;max-width:620px;background:var(--sheet);border:1px solid var(--line);border-radius:8px;padding:26px 24px 22px;box-shadow:0 30px 60px -30px rgba(0,0,0,.45);outline:0}
-.m h3{margin:0 0 18px;font:400 28px/1.1 var(--serif)}
+.m h3{margin:0 0 18px;font:600 28px/1.1 var(--serif)}
 .f{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
 .f label{display:block;margin-bottom:4px;font-size:13px;font-weight:500;color:var(--ink2)}
 .f .full{grid-column:1/-1}
 .f label.btn{display:inline-flex;margin:0;color:var(--ink);font-size:13px}
-.fh{grid-column:1/-1;margin-top:10px;padding-top:16px;border-top:1px solid var(--line);font:500 17px var(--serif)}
+.fh{grid-column:1/-1;margin-top:10px;padding-top:16px;border-top:1px solid var(--line);font:600 17px var(--serif)}
 @media (max-width:360px){.f{grid-template-columns:1fr}}@media (max-width:480px){.m{padding:0;align-items:flex-end}.m>div{border-radius:10px 10px 0 0;max-height:94vh;overflow:auto;padding-bottom:calc(22px + env(safe-area-inset-bottom,0px))}}
 .vw{background:rgba(10,9,7,.92);align-items:center;flex-direction:column;gap:14px}
 .vw img,.vw video{max-width:100%;max-height:80vh;display:block;border-radius:3px}
@@ -157,9 +167,38 @@ input:focus,select:focus,textarea:focus{border-color:var(--ink);box-shadow:0 0 0
 #lmap{height:480px;margin-top:20px;border:1px solid var(--line);border-radius:6px;overflow:hidden;position:relative;z-index:0}
 .leaflet-popup-content-wrapper{border-radius:6px;background:var(--sheet);color:var(--ink);font-family:var(--sans)}.leaflet-popup-tip{background:var(--sheet)}
 @media (prefers-color-scheme:dark){.leaflet-tile-pane{filter:invert(1) hue-rotate(180deg) brightness(.85) contrast(.9) saturate(.6)}}
-.pn{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--paper);border:2px solid var(--paper);box-shadow:0 3px 8px rgba(0,0,0,.3)}.pn .ic{width:15px;height:15px}
+.pn{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--ac);color:#fff;border:2px solid #fff;box-shadow:0 3px 8px rgba(0,0,0,.3)}.pn .ic{width:15px;height:15px}
 .box{max-width:400px;margin:30px 0}.box label{display:block;margin:14px 0 4px;font-size:13px;font-weight:500;color:var(--ink2)}
 .spin{width:22px;height:22px;border:2px solid var(--line2);border-top-color:var(--ink);border-radius:50%;animation:sp .8s linear infinite;display:inline-block;vertical-align:middle;margin-right:10px}@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ficha do cliente e leitura de documentos */
+.fs{border-top:1px solid var(--line);padding-top:4px}
+.fs summary{list-style:none;cursor:pointer;display:flex;align-items:baseline;gap:10px;padding:12px 0 8px;font:600 17px var(--serif)}
+.fs summary::-webkit-details-marker{display:none}
+.fs summary::before{content:"+";width:14px;font:400 18px var(--sans);color:var(--mu)}
+.fs[open] summary::before{content:"–"}
+.fs summary small{margin-left:auto;font:400 12px var(--sans);color:var(--mu)}
+.fs>.f{padding:4px 0 14px 24px}
+@media (max-width:480px){.fs>.f{padding-left:0}}
+.fhint{display:block;min-height:0;font-size:12px;color:var(--bad);margin-top:3px}
+input.hl,select.hl{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 10%,var(--sheet))}
+.scan{margin:0 0 18px;padding:14px 16px;background:var(--soft);border-radius:6px}
+.scan-t b{display:block;font:600 16px var(--serif)}.scan-t span{display:block;font-size:13px;color:var(--ink2);margin-top:2px}
+.scan label.btn{display:inline-flex}
+.conf{margin-top:14px;padding-top:12px;border-top:1px solid var(--line2)}
+.conf-h b{display:block;font:600 16px var(--serif)}.conf-h span{font-size:13px;color:var(--mu)}
+.conf-l{margin-top:10px;border-top:1px solid var(--line2)}
+.cr{display:grid;grid-template-columns:22px 130px 1fr;gap:6px 10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line2);font-size:14px;cursor:pointer}
+.cr>input[type=checkbox]{width:18px;height:18px;min-height:0;margin:0;accent-color:var(--ac)}
+.cl{color:var(--ink2);font-size:13px}
+.cv input{min-height:36px;padding:6px 10px;font-size:14px}
+.cv small{display:block;font-size:12px;color:var(--warn);margin-top:3px}
+.att-ck{grid-template-columns:22px 1fr;border-bottom:0;margin-top:6px}
+@media (max-width:480px){.cr{grid-template-columns:22px 1fr}.cr .cv{grid-column:2}}
+.err-box,.warn-box,.ok-box{margin:12px 0 0;padding:9px 12px;border-radius:5px;font-size:13px}
+.err-box{background:color-mix(in srgb,var(--bad) 12%,transparent);color:var(--bad)}
+.warn-box{background:color-mix(in srgb,var(--warn) 14%,transparent);color:var(--ink)}
+.ok-box{background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ink)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style></head><body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -181,10 +220,11 @@ input:focus,select:focus,textarea:focus{border-color:var(--ink);box-shadow:0 0 0
 <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="1.5"/><path d="M16 10l5-3v10l-5-3"/></symbol>
 <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
 <symbol id="i-clip" viewBox="0 0 24 24"><path d="M20 11l-8.5 8.5a5 5 0 01-7-7L13 4a3.5 3.5 0 015 5l-8.5 8.5a2 2 0 01-3-3L14 7"/></symbol>
+<symbol id="i-scan" viewBox="0 0 24 24"><path d="M4 8V5a1 1 0 011-1h3M16 4h3a1 1 0 011 1v3M20 16v3a1 1 0 01-1 1h-3M8 20H5a1 1 0 01-1-1v-3"/><path d="M8 10h8M8 14h5"/></symbol>
 <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></symbol>
 </defs></svg>
 
-<div class="wrap"><div class="top"><span class="brand">Caderno de imóveis</span><span class="who" id="mail"></span><button onclick="logout()">Sair</button></div></div>
+<div class="band"><div class="wrap"><div class="top"><a class="brand" href="#" onclick="go('i');return false"><img src="img/ds.png" alt="DS"><span><b>Darling Soares</b><small>Corretora de imóveis</small></span></a><span class="who" id="mail"></span><button onclick="logout()">Sair</button></div></div></div>
 <nav class="nav" id="nav">
  <button data-t="i"><svg class="ic"><use href="#i-book"/></svg><span>Início</span></button>
  <button data-t="h"><svg class="ic"><use href="#i-key"/></svg><span>Imóveis</span></button>
@@ -200,6 +240,9 @@ const TIPOS=["Casa","Apartamento","Terreno","Comercial","Sítio"],SH=["Disponív
 const IC={Casa:"home",Apartamento:"building",Terreno:"plot",Comercial:"store",Sítio:"tree"};
 const SCOL={"Disponível":"var(--ok)","Reservado":"var(--warn)","Vendido":"var(--mu)","Alugado":"var(--info)","Novo contato":"var(--info)","Em atendimento":"var(--warn)","Visita marcada":"var(--ac)","Negociando":"var(--warn)","Fechado":"var(--ok)","Perdido":"var(--bad)"};
 const MAXMB=50;
+/* leitura de documentos (Firebase AI Logic). Tenta os modelos na ordem; troque se o Google lançar outro. */
+window.AI_MODELS=["gemini-3.5-flash","gemini-3.6-flash","gemini-3.5-flash-lite","gemini-2.5-flash"];
+window.AI_BACKEND="vertex"; /* "vertex" (Vertex AI / Agent Platform, plano Blaze) ou "google" (Gemini Developer API) */
 let D={houses:[],clients:[]},tab="i",F={h:{q:"",t:"",s:""},c:{q:"",s:"",o:""}},U,FAIL=null,LM=null,OPEN=null,FA=null,AT={};
 const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const I=(n,c="")=>`<svg class="ic ${c}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
@@ -221,6 +264,7 @@ window.put=(c,o)=>{const k=KEY(c),i=D[k].findIndex(x=>x.id==o.id);i<0?D[k].unshi
 window.rm=(c,id)=>{D[KEY(c)]=D[KEY(c)].filter(x=>x.id!=id);render()};
 window.upload=(rel,file,onp)=>new Promise(res=>{let p=0;const t=setInterval(()=>{p+=.25;onp(Math.min(p,1));if(p>=1){clearInterval(t);res({url:URL.createObjectURL(file),path:"demo/"+rel})}},150)});
 window.unload=()=>{};
+window.lerDoc=()=>new Promise(r=>setTimeout(()=>r({tipoDocumento:"RG (exemplo do modo demonstração)",nome:"JOSÉ CARLOS DA SILVA",cpf:"52998224725",rg:"2009123456 SSP/CE",nasc:"14/03/1988",cidade:"Fortaleza",estado:"CE",avisos:"Modo demonstração: estes dados são fictícios, o documento não foi lido de verdade."}),1400));
 window.logout=()=>location.reload();
 setTimeout(()=>{if(U===undefined&&!FAIL)window.onFail({code:"tempo esgotado",message:"A conexão demorou demais."})},8000);
 function demo(){D={houses:[{id:"d3",titulo:"Casa com quintal e varanda",tipo:"Casa",status:"Disponível",endereco:"Rua das Flores, 120",bairro:"Centro",cidade:"Fortaleza",preco:350000,quartos:3,area:140,dono:"Sr. Raimundo",fone:"(85) 98888-0000",ll:[-3.7319,-38.5267],obs:"Escritura em dia. Aceita financiamento.",att:[]},{id:"d2",titulo:"Apartamento vista mar",tipo:"Apartamento",status:"Reservado",bairro:"Meireles",cidade:"Fortaleza",preco:620000,quartos:2,area:78,ll:[-3.7236,-38.4890]},{id:"d1",titulo:"Terreno 300 m²",tipo:"Terreno",status:"Vendido",bairro:"Cidade Nova",preco:90000,area:300,ll:[-3.7700,-38.5500]}],clients:[{id:"c3",nome:"Maria Souza",fone:"(85) 90000-0000",status:"Visita marcada",objetivo:"Comprar",tipo:"Casa",orcamento:400000,bairros:"Centro, Aldeota"},{id:"c2",nome:"João Lima",status:"Novo contato",objetivo:"Alugar",orcamento:1800},{id:"c1",nome:"Ana Paula Ribeiro",status:"Negociando",objetivo:"Comprar",tipo:"Apartamento",orcamento:650000}]};FAIL=null;U={email:"modo demonstração"};render()}
@@ -233,7 +277,7 @@ function render(){try{
  document.body.classList.toggle("out",!U||!!FAIL);const v=$("#v");
  if(FAIL){head("Algo deu errado","Sem conexão");v.innerHTML=failV();return}
  if(U===undefined){head("Um momento","Abrindo…");v.innerHTML=`<p class="empty"><span class="spin"></span>Conectando ao Firebase</p>`;return}
- if(!U){head("Acesso restrito","Entrar");$("#mail").textContent="";v.innerHTML=loginV();return}
+ if(!U){$("#head").innerHTML=`<div><img class="biglogo" src="img/logo.png" alt="Darling Soares — Corretora de Imóveis"><span class="eyebrow" style="margin-top:22px">Área da corretora</span></div>`;$("#mail").textContent="";v.innerHTML=loginV();return}
  $("#mail").textContent=U.email||"";
  document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("on",b.dataset.t==tab));
  AT={};
@@ -275,16 +319,6 @@ function housesV(){const f=F.h,q=f.q.toLowerCase();
   +(h.obs?`<p class="obs">${esc(h.obs)}</p>`:"")+attView(h.att)
   +`<div class="row">${h.ll?`<a class="btn sm" target="_blank" rel="noopener" href="https://www.google.com/maps?q=${h.ll[0]},${h.ll[1]}">${I("pin")}Abrir no Maps</a>`:""}${h.fone?`<a class="btn sm" target="_blank" rel="noopener" href="https://wa.me/55${String(h.fone).replace(/\D/g,"")}">${I("chat")}Proprietário</a>`:""}<button class="btn sm p" onclick="fh('${h.id}')">${I("edit")}Editar</button></div>`)}).join(""):`<p class="empty">Nenhum imóvel encontrado.</p>`}`}
 
-function clientsV(){const f=F.c,q=f.q.toLowerCase();
- const L=D.clients.filter(c=>(!f.s||c.status==f.s)&&(!f.o||c.objetivo==f.o)&&(!q||[c.nome,c.fone,c.email,c.bairros,c.obs].join(" ").toLowerCase().includes(q)));
- return `<div class="fc"><input id="q" type="search" placeholder="Buscar por nome, telefone, bairro…" value="${esc(f.q)}" oninput="F.c.q=this.value;keep()"><select onchange="F.c.s=this.value;render()">${opts(SC,f.s,"Qualquer situação")}</select><select onchange="F.c.o=this.value;render()">${opts(OBJ,f.o,"Comprar ou alugar")}</select></div>
- ${(f.q||f.s||f.o)?`<p class="count">${L.length} resultado(s) · <button class="lnk" onclick="F.c={q:'',s:'',o:''};render()">limpar filtros</button></p>`:""}
- ${L.length?L.map(c=>{const ini=(c.nome||"?").trim().split(/\s+/).map(w=>w[0]).slice(0,2).join("").toUpperCase();
-  return item(c,`<div class="th">${esc(ini)}</div>`,esc(c.nome),esc([c.objetivo,c.tipo].filter(Boolean).join(" · ")),`<div class="pr">${money(c.orcamento)}</div>${st(c.status)}`,
-  kv([["Telefone",esc(c.fone)],["E-mail",esc(c.email)],["Procura",esc([c.objetivo,c.tipo].filter(Boolean).join(" · "))],["Bairros de interesse",esc(c.bairros)]])
-  +(c.obs?`<p class="obs">${esc(c.obs)}</p>`:"")+attView(c.att)
-  +`<div class="row">${c.fone?`<a class="btn sm" target="_blank" rel="noopener" href="https://wa.me/55${String(c.fone).replace(/\D/g,"")}">${I("chat")}WhatsApp</a>`:""}<button class="btn sm p" onclick="fc('${c.id}')">${I("edit")}Editar</button></div>`)}).join(""):`<p class="empty">Nenhum cliente encontrado.</p>`}`}
-
 function mapV(){window._P=D.houses.filter(h=>h.ll);return window._P.length?`<div id="lmap"></div>`:`<p class="empty">Nenhum imóvel com localização. Edite um imóvel e informe as coordenadas.</p>`}
 function drawMap(){if(LM){LM.remove();LM=null}const el=$("#lmap");if(!el)return;if(!window.L){el.innerHTML='<p class="empty" style="padding:30px">Mapa indisponível (sem internet?).</p>';return}
  LM=L.map(el);L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(LM);
@@ -294,7 +328,7 @@ const tg=e=>{e.setAttribute("aria-expanded",e.classList.toggle("open"))},kd=(e,t
 
 /* janelas */
 let LF;function openM(h){LF=document.activeElement;$("#mb").innerHTML=h;$("#m").classList.add("on");setTimeout(()=>$("#mb").focus(),40)}
-function closeM(){if(FA)cancelFA();$("#m").classList.remove("on");if(LF&&LF.focus)LF.focus()}
+function closeM(){SCAN=null;if(FA)cancelFA();$("#m").classList.remove("on");if(LF&&LF.focus)LF.focus()}
 $("#m").onmousedown=e=>{if(e.target.id=="m")closeM()};
 function openV(id){const a=AT[id];if(!a)return;$("#vw").innerHTML=(isImg(a)?`<img src="${esc(a.url)}" alt="${esc(a.nome)}">`:`<video src="${esc(a.url)}" controls autoplay playsinline></video>`)+`<div class="bt"><span>${esc(a.nome)}</span><a class="btn sm" href="${esc(a.url)}" target="_blank" rel="noopener">${I("ext")}Original</a><button class="btn sm" onclick="closeV()">${I("x")}Fechar</button></div>`;$("#vw").classList.add("on")}
 function closeV(){$("#vw").classList.remove("on");setTimeout(()=>{if(!$("#vw").classList.contains("on"))$("#vw").innerHTML=""},200)}
@@ -342,26 +376,121 @@ function sh(){if($("#b3").value&&!parseLL($("#b3").value))return alert("Coordena
  const att=attOut();if(!att)return;
  const o={id:FA.id,titulo:$("#a1").value.trim(),tipo:$("#a2").value,status:$("#a3").value,endereco:$("#a4").value,bairro:$("#a5").value,cidade:$("#a6").value,preco:$("#a7").value,area:$("#a8").value,quartos:$("#a9").value,dono:$("#b1").value,fone:$("#b2").value,ll:parseLL($("#b3").value),obs:$("#b4").value,att};
  finishFA();closeM();put("imoveis",o)}
-function fc(id){const c=D.clients.find(x=>x.id==id)||{status:"Novo contato",objetivo:"Comprar"};startFA("clientes",c);
- openM(`<h3>${id?"Editar cliente":"Novo cliente"}</h3><div class="f">${inp("a1","Nome",c.nome,"text","full")}${inp("a2","Telefone",c.fone,"tel")}${inp("a3","E-mail",c.email,"email")}
- <div><label for="a4">Situação</label><select id="a4">${opts(SC,c.status)}</select></div><div><label for="a5">Objetivo</label><select id="a5">${opts(OBJ,c.objetivo)}</select></div>
- <div><label for="a6">Tipo de imóvel</label><select id="a6">${opts(TIPOS,c.tipo,"—")}</select></div>${inp("a7","Orçamento (R$)",c.orcamento,"number")}${inp("a8","Bairros de interesse",c.bairros,"text","full")}
- <div class="full"><label for="a9">Observações</label><textarea id="a9" rows="3">${esc(c.obs)}</textarea></div>
- ${attEditor("RG, CPF, comprovante de renda e de residência, contratos, propostas…")}</div>${actions("sc",id,"clients")}`);drawAtt()}
-function sc(){const nome=$("#a1").value.trim();if(!nome)return alert("Informe o nome.");
- const att=attOut();if(!att)return;
- const o={id:FA.id,nome,fone:$("#a2").value,email:$("#a3").value,status:$("#a4").value,objetivo:$("#a5").value,tipo:$("#a6").value,orcamento:$("#a7").value,bairros:$("#a8").value,obs:$("#a9").value,att};
- finishFA();closeM();put("clientes",o)}
 function del(k,id){const r=D[k].find(x=>x.id==id);if(!confirm("Excluir definitivamente"+((r&&r.att&&r.att.length)?" (e os "+r.att.length+" anexos)":"")+"?"))return;
  if(FA)cancelFA();
  (r&&r.att||[]).forEach(a=>window.unload(a.path));closeM();rm(k=="houses"?"imoveis":"clientes",id)}
+/* ===== ficha do cliente (campos do Cadastro de Cliente) ===== */
+const SN=["Sim","Não"],ECIV=["Solteiro(a)","Casado(a)","União estável","Divorciado(a)","Separado(a)","Viúvo(a)"],
+ ESC=["Fundamental incompleto","Fundamental completo","Médio incompleto","Médio completo","Superior incompleto","Superior completo","Pós-graduação"],
+ TREN=["Formal (carteira assinada)","Informal","Autônomo","Servidor público","Aposentado / pensionista","Empresário / MEI","Mista"],
+ UFS="AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO".split(" ");
+/* [chave, rótulo, tipo (ou lista de opções), largura total?] */
+const CF=[
+ ["Dados pessoais",[["nome","Nome completo","text",1],["cpf","CPF","cpf"],["rg","RG","text"],["nasc","Data de nascimento","date"],["estadoCivil","Estado civil",ECIV],["profissao","Profissão","text"],["escolaridade","Escolaridade",ESC],["fone","Telefone","tel"],["email","E-mail","email"]]],
+ ["Endereço",[["endereco","Endereço","text",1],["bairro","Bairro","text"],["cidade","Cidade","text"],["estado","Estado",UFS],["cep","CEP","cep"]]],
+ ["Trabalho, renda e banco",[["admissao","Data de admissão","date"],["renda","Renda (R$)","money"],["tipoRenda","Tipo de renda",TREN],["agencia","Agência","text"],["operacao","Operação","text"],["conta","Conta","text"]]],
+ ["FGTS e financiamento",[["fgts","Tem FGTS?",SN],["fgtsValor","Valor do FGTS (R$)","money"],["pis","PIS","text"],["usarSaldo","Usar saldo?",SN],["saldoValor","Valor a usar (R$)","money"],["financAtivo","Financiamento ativo?",SN],["jaFinanc","Já teve financiamento?",SN],["subsidio","Já recebeu subsídio?",SN]]],
+ ["Dependente",[["dep_nome","Nome","text",1],["dep_cpf","CPF","cpf"],["dep_rg","RG","text"],["dep_nasc","Data de nascimento","date"],["dep_profissao","Profissão","text"],["dep_escolaridade","Escolaridade",ESC],["dep_fone","Telefone","tel"],["dep_email","E-mail","email"]]],
+ ["Simulação e processo",[["simulacao","Simulação","text"],["valorCasa","Valor da casa (R$)","money"],["local","Local","text"],["modelo","Modelo","text"],["tamanho","Tamanho","text"],["analise","Análise","text"],["entrevista","Entrevista","text"],["condicionou","Condicionou","text"],["dataProc","Data","date"]]],
+ ["Atendimento",[["status","Situação",SC],["objetivo","Objetivo",OBJ],["tipo","Tipo de imóvel",["",...TIPOS]],["orcamento","Orçamento (R$)","money"],["bairros","Bairros de interesse","text",1],["obs","Observações","area",1]]]];
+const CFF=CF.flatMap(s=>s[1]),CFL=Object.fromEntries(CFF.map(f=>[f[0],f]));
+const dBR=v=>{const m=String(v||"").match(/^(\d{4})-(\d{2})-(\d{2})/);return m?`${m[3]}/${m[2]}/${m[1]}`:v||""};
+const fmtV=(f,v)=>v==null||v===""?"":f[2]=="date"?dBR(v):f[2]=="money"?money(v):String(v);
+const onlyD=s=>String(s||"").replace(/\D/g,"");
+const mask={cpf:v=>{const d=onlyD(v).slice(0,11);return d.replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d{1,2})$/,"$1-$2")},
+ cep:v=>{const d=onlyD(v).slice(0,8);return d.length>5?d.slice(0,5)+"-"+d.slice(5):d},
+ tel:v=>{const d=onlyD(v).replace(/^55(?=\d{10,11}$)/,"").slice(0,11);return d.length<3?d:d.length<7?`(${d.slice(0,2)}) ${d.slice(2)}`:d.length<11?`(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`:`(${d.slice(0,2)}) ${d.slice(2,7)}-${d.slice(7)}`}};
+function cpfOk(v){const d=onlyD(v);if(d.length!=11||/^(\d)\1+$/.test(d))return false;const c=n=>{let s=0;for(let i=0;i<n;i++)s+=+d[i]*(n+1-i);const r=s*10%11%10;return r};return c(9)==+d[9]&&c(10)==+d[10]}
+function fieldH(f,v){const [k,l,t,full]=f,id="c_"+k,cls=full?"full":"";
+ if(Array.isArray(t))return `<div class="${cls}"><label for="${id}">${l}</label><select id="${id}">${t[0]===""?`<option value="">—</option>`+opts(t.slice(1),v):`<option value="">—</option>`+opts(t,v)}</select></div>`;
+ if(t=="area")return `<div class="${cls}"><label for="${id}">${l}</label><textarea id="${id}" rows="3">${esc(v)}</textarea></div>`;
+ const it=t=="money"?`type="number" step="0.01" inputmode="decimal"`:t=="date"?`type="date"`:t=="email"?`type="email"`:t=="tel"?`type="tel" inputmode="tel" oninput="this.value=mask.tel(this.value)"`:t=="cpf"?`inputmode="numeric" oninput="this.value=mask.cpf(this.value);cpfHint(this)" onblur="cpfHint(this,1)"`:t=="cep"?`inputmode="numeric" oninput="this.value=mask.cep(this.value)"`:`type="text"`;
+ return `<div class="${cls}"><label for="${id}">${l}</label><input id="${id}" ${it} value="${esc(v)}">${t=="cpf"?`<small class="fhint" id="${id}_h"></small>`:""}</div>`}
+function cpfHint(el,final){const h=$("#"+el.id+"_h");if(!h)return;const d=onlyD(el.value);h.textContent=d.length==11&&!cpfOk(d)?"CPF parece inválido — confira os números":final&&d.length&&d.length<11?"CPF incompleto":""}
+const filled=(c,sec)=>sec[1].filter(f=>c[f[0]]!=null&&c[f[0]]!=="").length;
+
+function clientsV(){const f=F.c,q=f.q.toLowerCase();
+ const L=D.clients.filter(c=>(!f.s||c.status==f.s)&&(!f.o||c.objetivo==f.o)&&(!q||[c.nome,c.cpf,onlyD(c.cpf),c.fone,c.email,c.bairros,c.dep_nome,c.obs].join(" ").toLowerCase().includes(q)));
+ return `<div class="fc"><input id="q" type="search" placeholder="Buscar por nome, CPF, telefone, bairro…" value="${esc(f.q)}" oninput="F.c.q=this.value;keep()"><select onchange="F.c.s=this.value;render()">${opts(SC,f.s,"Qualquer situação")}</select><select onchange="F.c.o=this.value;render()">${opts(OBJ,f.o,"Comprar ou alugar")}</select></div>
+ ${(f.q||f.s||f.o)?`<p class="count">${L.length} resultado(s) · <button class="lnk" onclick="F.c={q:'',s:'',o:''};render()">limpar filtros</button></p>`:""}
+ ${L.length?L.map(c=>{const ini=(c.nome||"?").trim().split(/\s+/).map(w=>w[0]).slice(0,2).join("").toUpperCase();
+  const body=CF.map(([t,fs])=>{const p=fs.filter(x=>x[0]!="nome"&&x[0]!="obs"&&x[0]!="status"&&c[x[0]]!=null&&c[x[0]]!=="");return p.length?`<div class="lbl">${t}</div>${kv(p.map(x=>[x[1].replace(/\?$/,"").replace(" (R$)",""),esc(fmtV(x,c[x[0]]))]))}`:""}).join("");
+  return item(c,`<div class="th">${esc(ini)}</div>`,esc(c.nome),esc([c.objetivo,c.tipo,c.cpf].filter(Boolean).join(" · ")),`<div class="pr">${money(c.orcamento||c.valorCasa)}</div>${st(c.status)}`,
+  (body||`<p class="meta">Sem outros dados.</p>`)+(c.obs?`<div class="lbl">Observações</div><p class="obs" style="margin:0">${esc(c.obs)}</p>`:"")+attView(c.att)
+  +`<div class="row">${c.fone?`<a class="btn sm" target="_blank" rel="noopener" href="https://wa.me/55${onlyD(c.fone)}">${I("chat")}WhatsApp</a>`:""}<button class="btn sm p" onclick="fc('${c.id}')">${I("edit")}Editar</button></div>`)}).join(""):`<p class="empty">Nenhum cliente encontrado.</p>`}`}
+
+function fc(id){const c=D.clients.find(x=>x.id==id)||{status:"Novo contato",objetivo:"Comprar"};startFA("clientes",c);
+ const openS=new Set(["Dados pessoais","Atendimento"]);
+ openM(`<h3>${id?"Editar cliente":"Novo cliente"}</h3>
+ <div class="scan" id="scan"><div class="scan-t"><b>Preencher a partir de um documento</b><span>Tire uma foto (ou escolha uma imagem/PDF) do RG, CNH, comprovante de residência, holerite, carteira de trabalho… O sistema lê e mostra o que encontrou antes de preencher.</span></div>
+ <div class="row" style="margin-top:10px"><label class="btn sm p">${I("scan")}Documento do cliente<input type="file" hidden multiple accept="image/*,application/pdf" onchange="scanDoc(this.files,'');this.value=''"></label><label class="btn sm">${I("scan")}Do dependente<input type="file" hidden multiple accept="image/*,application/pdf" onchange="scanDoc(this.files,'dep_');this.value=''"></label></div><div id="scanr"></div></div>
+ <div class="f">${CF.map(([t,fs])=>`<details class="full fs" data-s="${t}" ${openS.has(t)||(id&&filled(c,[t,fs]))?"open":""}><summary>${t}<small>${id&&filled(c,[t,fs])?filled(c,[t,fs])+" preenchido(s)":""}</small></summary><div class="f">${fs.map(f=>fieldH(f,c[f[0]])).join("")}</div></details>`).join("")}
+ ${attEditor("RG, CPF, CNH, comprovantes de renda e de residência, carteira de trabalho, extrato do FGTS, contratos…")}</div>${actions("sc",id,"clients")}`);drawAtt()}
+function sc(){const nome=$("#c_nome").value.trim();if(!nome){$("#c_nome").closest("details").open=true;$("#c_nome").focus();return alert("Informe o nome.")}
+ if(SCAN&&SCAN.busy)return alert("Espere a leitura do documento terminar.");
+ const att=attOut();if(!att)return;
+ const o={id:FA.id,att};for(const [k,,t] of CFF){let v=$("#c_"+k).value;if(typeof v=="string")v=v.trim();o[k]=v}
+ SCAN=null;finishFA();closeM();put("clientes",o)}
+
+/* ===== leitura de documentos ===== */
+let SCAN=null;
+const DOCF={tipoDocumento:"Que documento(s) é/são, ex.: RG, CNH, comprovante de residência, holerite",nome:"Nome completo da pessoa",cpf:"CPF no formato 000.000.000-00",rg:"Número do RG / registro geral (inclua órgão emissor e UF se aparecer, ex.: 2009123456 SSP/CE). Na CNH é o campo 'Doc. identidade'",
+ nasc:"Data de nascimento DD/MM/AAAA",estadoCivil:"Estado civil, se aparecer (ex.: certidão de casamento)",profissao:"Profissão ou cargo",escolaridade:"Escolaridade, se aparecer",fone:"Telefone",email:"E-mail",
+ endereco:"Logradouro com número e complemento",bairro:"Bairro",cidade:"Cidade",estado:"UF com 2 letras",cep:"CEP 00000-000",
+ admissao:"Data de admissão DD/MM/AAAA",renda:"Renda/salário bruto mensal em reais, só número com ponto decimal (ex.: 3250.75)",pis:"Número do PIS/PASEP/NIT",agencia:"Agência bancária",operacao:"Operação da conta (Caixa)",conta:"Número da conta",
+ avisos:"Observações curtas: documento ilegível, cortado, vencido, nomes diferentes entre documentos etc. Vazio se tudo ok"};
+const DOC_PROMPT=`Você está ajudando uma corretora de imóveis a cadastrar um cliente para financiamento habitacional.
+Leia as imagens/PDFs de documentos brasileiros enviados (RG, CNH, CPF, comprovante de residência, holerite/contracheque, carteira de trabalho, certidão de casamento, extrato do FGTS etc.).
+Extraia apenas o que estiver escrito e legível. Nunca invente nem deduza. Se um campo não aparecer, deixe vazio.
+Se houver vários documentos da mesma pessoa, junte as informações. Responda em português.`;
+const PERS=["nome","cpf","rg","nasc","profissao","escolaridade","fone","email"];
+async function toPart(f){
+ if(/^image\//.test(f.type)){try{const bmp=await createImageBitmap(f),s=Math.min(1,1800/Math.max(bmp.width,bmp.height)),c=document.createElement("canvas");c.width=Math.round(bmp.width*s);c.height=Math.round(bmp.height*s);c.getContext("2d").drawImage(bmp,0,0,c.width,c.height);return {inlineData:{mimeType:"image/jpeg",data:c.toDataURL("image/jpeg",.88).split(",")[1]}}}catch(e){}}
+ const b=new Uint8Array(await f.arrayBuffer());let s="";for(let i=0;i<b.length;i+=32768)s+=String.fromCharCode.apply(null,b.subarray(i,i+32768));
+ return {inlineData:{mimeType:f.type||"application/pdf",data:btoa(s)}}}
+function norm(k,v){v=String(v??"").trim();if(!v)return"";const f=CFL[k];if(!f)return v;const t=f[2];
+ if(t=="date"){const m=v.match(/(\d{1,2})\D(\d{1,2})\D(\d{4})/);return m?`${m[3]}-${m[2].padStart(2,"0")}-${m[1].padStart(2,"0")}`:/^\d{4}-\d{2}-\d{2}$/.test(v)?v:""}
+ if(t=="money"){const n=parseFloat(v.replace(/[^\d,.-]/g,"").replace(/\.(?=\d{3}(\D|$))/g,"").replace(",","."));return isNaN(n)?"":String(n)}
+ if(t=="cpf")return mask.cpf(v);if(t=="cep")return mask.cep(v);if(t=="tel")return mask.tel(v);
+ if(Array.isArray(t)){const o=t.filter(Boolean),lv=v.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+  return o.find(x=>x.toLowerCase()==v.toLowerCase())||o.find(x=>{const lx=x.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");return lx.startsWith(lv.slice(0,5))||lv.startsWith(lx.slice(0,5))})||""}
+ if(k.endsWith("nome"))return v.toLowerCase().replace(/(^|\s)(\S)/g,(a,b,c)=>b+c.toUpperCase()).replace(/ (D[aeo]s?|E) /g,s=>s.toLowerCase());
+ return v}
+async function scanDoc(files,pre){files=[...files];if(!files.length||!FA)return;const fa=FA;
+ const big=files.find(f=>f.size>20*1048576);if(big)return alert(`“${big.name}” é grande demais para leitura (máx. 20 MB).`);
+ SCAN={busy:true,files,pre};$("#scanr").innerHTML=`<p class="meta" style="margin:12px 0 0"><span class="spin"></span>Lendo ${files.length>1?files.length+" arquivos":"o documento"}… pode levar alguns segundos.</p>`;
+ let r;try{r=await window.lerDoc(files)}catch(e){console.error(e);if(FA!==fa)return;SCAN=null;
+  $("#scanr").innerHTML=`<p class="err-box">Não consegui ler: ${esc(aiErr(e))}</p>`;return}
+ if(FA!==fa)return;
+ const rows=[];for(const [k,v] of Object.entries(r||{})){if(k=="tipoDocumento"||k=="avisos")continue;const key=pre&&PERS.includes(k)?pre+k:pre&&!PERS.includes(k)?null:k;if(!key||!CFL[key])continue;
+  const nv=norm(key,v);if(!nv)continue;const cur=$("#c_"+key).value.trim();if(norm(key,cur)==nv)continue;rows.push([key,nv,cur])}
+ const tipo=(r&&r.tipoDocumento||"").trim();SCAN={busy:false,files,pre,rows,tipo};
+ $("#scanr").innerHTML=`<div class="conf"><div class="conf-h"><b>${tipo?esc(tipo):"Documento"}${pre?" · dependente":""}</b><span>Confira antes de usar. Desmarque o que estiver errado.</span></div>
+ ${r&&r.avisos?`<p class="warn-box">${esc(r.avisos)}</p>`:""}
+ ${rows.length?`<div class="conf-l">${rows.map(([k,nv,cur],i)=>`<label class="cr"><input type="checkbox" id="sk${i}" ${cur?"":"checked"}><span class="cl">${CFL[k][1].replace(/\?$/,"")}</span><span class="cv"><input id="sv${i}" value="${esc(nv)}" ${CFL[k][2]=="date"?'type="date"':""}>${cur?`<small>no cadastro: ${esc(fmtV(CFL[k],cur))} — marque para substituir</small>`:""}</span></label>`).join("")}</div>`:`<p class="meta">Nenhuma informação nova encontrada${r&&Object.values(r).some(Boolean)?" (o que foi lido já está no cadastro)":""}.</p>`}
+ <label class="cr att-ck"><input type="checkbox" id="sk_att" checked><span>Anexar ${files.length>1?"os "+files.length+" arquivos":"o arquivo"} ao cadastro${tipo?` como “${esc(tipo)}”`:""}</span></label>
+ <div class="row"><button class="btn p sm" onclick="applyScan()">Confirmar</button><button class="btn sm" onclick="SCAN=null;$('#scanr').innerHTML=''">Descartar</button></div></div>`;
+ $("#scanr").scrollIntoView({block:"nearest",behavior:"smooth"})}
+function applyScan(){if(!SCAN)return;let n=0;
+ SCAN.rows.forEach(([k],i)=>{if(!$("#sk"+i).checked)return;const el=$("#c_"+k),v=$("#sv"+i).value;el.value=CFL[k][2]=="date"?v:norm(k,v)||v;el.closest("details").open=true;el.classList.add("hl");setTimeout(()=>el.classList.remove("hl"),2400);n++});
+ const att=$("#sk_att").checked;
+ if(att){const tag=(SCAN.tipo||"Documento").replace(/[\\/:*?"<>|]+/g," ").slice(0,40)+(SCAN.pre?" (dependente)":"");addF(SCAN.files.map(f=>new File([f],`${tag} - ${f.name}`,{type:f.type})))}
+ $("#scanr").innerHTML=`<p class="ok-box">${n?n+" campo(s) preenchido(s)":"Nenhum campo alterado"}${att?" e documento anexado":""}. Lembre de salvar.</p>`;SCAN=null}
+function aiErr(e){const m=(e&&(e.code||"")+" "+(e.message||""))||"";
+ if(/demo/i.test(m))return m;
+ if(/api-not-enabled|not been used|disabled|SERVICE_DISABLED|firebasevertexai|firebaseml/i.test(m))return "o Firebase AI Logic ainda não foi ativado no projeto (Console do Firebase → AI Logic).";
+ if(/app.?check|attestation/i.test(m))return "o App Check bloqueou. Coloque a chave do reCAPTCHA no conexao.js (veja as instruções).";
+ if(/quota|429|resource.?exhausted/i.test(m))return "limite de uso atingido. Tente de novo em alguns minutos.";
+ if(/billing|blaze/i.test(m))return "o projeto precisa estar no plano Blaze.";
+ return m.slice(0,200)||"erro desconhecido"}
+
 render();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script type="module">
 const g=id=>document.getElementById(id);
 try{
- const {auth,db}=await import("./conexao.js"),V="https://www.gstatic.com/firebasejs/10.12.2/";
+ const {auth,db}=await import("./conexao.js"),V="https://www.gstatic.com/firebasejs/12.19.0/";
  const A=await import(V+"firebase-auth.js"),S=await import(V+"firebase-firestore.js"),ST=await import(V+"firebase-storage.js");
  const storage=ST.getStorage(auth.app);
  let un=[];const path=(c,id)=>S.doc(db,"users",auth.currentUser.uid,c,id);
@@ -372,6 +501,16 @@ try{
  window.upload=(rel,file,onp)=>new Promise((res,rej)=>{
   const p=`users/${auth.currentUser.uid}/${rel}`,t=ST.uploadBytesResumable(ST.ref(storage,p),file,file.type?{contentType:file.type}:undefined);
   t.on("state_changed",s=>onp(s.totalBytes?s.bytesTransferred/s.totalBytes:0),rej,async()=>{try{res({url:await ST.getDownloadURL(t.snapshot.ref),path:p})}catch(e){rej(e)}})});
+ window.lerDoc=async files=>{
+  const AI=await import(V+"firebase-ai.js"),ai=AI.getAI(auth.app,{backend:window.AI_BACKEND=="google"?new AI.GoogleAIBackend():new AI.VertexAIBackend("global")});
+  const props={};for(const [k,d] of Object.entries(DOCF))props[k]=AI.Schema.string({description:d});
+  const schema=AI.Schema.object({properties:props,optionalProperties:Object.keys(props)});
+  const parts=await Promise.all(files.map(toPart));let last;
+  for(const m of window.AI_MODELS){try{
+   const model=AI.getGenerativeModel(ai,{model:m,generationConfig:{responseMimeType:"application/json",responseSchema:schema,temperature:0}});
+   const r=await model.generateContent([DOC_PROMPT,...parts]);return JSON.parse(r.response.text())
+  }catch(e){last=e;console.warn("modelo",m,e);if(!/not.?found|404|is not supported|unsupported model|invalid model/i.test(e.message||""))throw e}}
+  throw last};
  window.unload=p=>{if(p&&p.startsWith("users/"))ST.deleteObject(ST.ref(storage,p)).catch(e=>console.warn("não apagou",p,e.code))};
  A.onAuthStateChanged(auth,u=>{un.forEach(f=>f());un=[];window.onAuth(u);
   if(u)[["imoveis","houses"],["clientes","clients"]].forEach(([c,k])=>un.push(S.onSnapshot(S.collection(db,"users",u.uid,c),s=>window.onData(k,s.docs.map(d=>d.data())),e=>window.onFail(e))))},e=>window.onFail(e));
