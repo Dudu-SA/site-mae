@@ -153,6 +153,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--ink);box-shadow:0 0 0
 .f{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
 .f label{display:block;margin-bottom:4px;font-size:13px;font-weight:500;color:var(--ink2)}
 .f .full{grid-column:1/-1}
+.dims{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 14px}@media (max-width:360px){.dims{grid-template-columns:1fr}}
 .f label.btn{display:inline-flex;margin:0;color:var(--ink);font-size:13px}
 .fh{grid-column:1/-1;margin-top:10px;padding-top:16px;border-top:1px solid var(--line);font:600 17px var(--serif)}
 @media (max-width:360px){.f{grid-template-columns:1fr}}@media (max-width:480px){.m{padding:0;align-items:flex-end}.m>div{border-radius:10px 10px 0 0;max-height:94vh;overflow:auto;padding-bottom:calc(22px + env(safe-area-inset-bottom,0px))}}
@@ -326,7 +327,7 @@ function housesV(){const f=F.h,q=f.q.toLowerCase();
  ${(f.q||f.t||f.s)?`<p class="count">${L.length} resultado(s) · <button class="lnk" onclick="F.h={q:'',t:'',s:''};render()">limpar filtros</button></p>`:""}
  ${L.length?L.map(h=>{const im=(h.att||[]).find(a=>isImg(a)&&(a.thumb||a.url));
   return item(h,`<div class="th">${im?`<img src="${esc(im.thumb||im.url)}" alt="" loading="lazy">`:I(IC[h.tipo]||"home")}</div>`,esc(h.titulo||"Sem título"),esc([h.tipo,h.bairro].filter(Boolean).join(" · ")),`<div class="pr">${money(h.preco)}</div>${st(h.status)}`,
-  kv([["Endereço",esc([h.endereco,h.bairro,h.cidade].filter(Boolean).join(", "))],["Área",h.area?esc(h.area)+" m²":""],["Quartos",esc(h.quartos)],["Proprietário",esc(h.dono)],["Telefone",esc(h.fone)]])
+  kv([["Endereço",esc([h.endereco,h.bairro,h.cidade].filter(Boolean).join(", "))],["Medidas (X × Y × Z)",(h.largura||h.altura||h.comprimento)?[h.largura,h.altura,h.comprimento].map(v=>v?nf(v):"—").join(" × ")+" m":""],["Área",h.area?nf(h.area)+" m²":""],["Quartos",esc(h.quartos)],["Proprietário",esc(h.dono)],["Telefone",esc(h.fone)]])
   +(h.obs?`<p class="obs">${esc(h.obs)}</p>`:"")+attView(h.att)
   +`<div class="row">${h.ll?`<a class="btn sm" target="_blank" rel="noopener" href="https://www.google.com/maps?q=${h.ll[0]},${h.ll[1]}">${I("pin")}Abrir no Maps</a>`:""}${h.fone?`<a class="btn sm" target="_blank" rel="noopener" href="https://wa.me/55${String(h.fone).replace(/\D/g,"")}">${I("chat")}Proprietário</a>`:""}<button class="btn sm p" onclick="fh('${h.id}')">${I("edit")}Editar</button></div>`)}).join(""):`<p class="empty">Nenhum imóvel encontrado.</p>`}`}
 
@@ -383,15 +384,23 @@ function fh(id){const h=D.houses.find(x=>x.id==id)||{tipo:"Casa",status:"Dispon�
  openM(`<h3>${id?"Editar imóvel":"Novo imóvel"}</h3><div class="f">${inp("a1","Título",h.titulo,"text","full")}
  <div><label for="a2">Tipo</label><select id="a2">${opts(TIPOS,h.tipo)}</select></div><div><label for="a3">Situação</label><select id="a3">${opts(SH,h.status)}</select></div>
  ${inp("a4","Endereço",h.endereco,"text","full")}${inp("a5","Bairro",h.bairro)}${inp("a6","Cidade",h.cidade)}
- ${inp("a7","Preço (R$)",h.preco,"number")}${inp("a8","Área (m²)",h.area,"number")}${inp("a9","Quartos",h.quartos,"number")}<div></div>
+ ${inp("a7","Preço (R$)",h.preco,"number")}${inp("a9","Quartos",h.quartos,"number")}
+ <div class="fh">Medidas <small style="font:400 13px var(--sans);color:var(--mu)">em metros</small></div>
+ <div class="full dims"><div><label for="dx">Largura (X)</label><input id="dx" type="number" step="0.01" min="0" inputmode="decimal" value="${esc(h.largura)}" oninput="calcA()"></div><div><label for="dy">Altura (Y)</label><input id="dy" type="number" step="0.01" min="0" inputmode="decimal" value="${esc(h.altura)}"></div><div><label for="dz">Compr. (Z)</label><input id="dz" type="number" step="0.01" min="0" inputmode="decimal" value="${esc(h.comprimento)}" oninput="calcA()"></div></div>
+ ${inp("a8","Área (m²)",h.area,"number")}<div class="hint" id="ahint" style="align-self:end;padding-bottom:10px"></div>
+ <div class="fh" style="margin-top:4px">Proprietário e localização</div>
  ${inp("b1","Proprietário",h.dono)}${inp("b2","Telefone do proprietário",h.fone,"tel")}
  <div class="full"><label for="b3">Localização (cole “lat, lng” do Google Maps)</label><input id="b3" value="${h.ll?h.ll.join(", "):""}"><button class="lnk" style="margin-top:6px" onclick="gps()">usar minha localização atual</button></div>
  <div class="full"><label for="b4">Observações</label><textarea id="b4" rows="3">${esc(h.obs)}</textarea></div>
  ${attEditor("Fotos e vídeos do imóvel, escritura, matrícula, IPTU, planta, contrato…")}</div>${actions("sh",id,"houses")}`);drawAtt()}
+const nf=v=>Number(v).toLocaleString("pt-BR",{maximumFractionDigits:2});
+/* área = largura × comprimento, preenchida sozinha enquanto a corretora não digitar outra */
+function calcA(){const x=parseFloat($("#dx").value),z=parseFloat($("#dz").value),a=$("#a8"),h=$("#ahint");if(!(x>0&&z>0)){h.textContent="";return}
+ const v=Math.round(x*z*100)/100;if(!a.value||a.dataset.auto==a.value){a.value=v;a.dataset.auto=String(v);h.textContent="calculada: X × Z"}else h.textContent=`X × Z = ${nf(v)} m²`}
 function gps(){navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>$("#b3").value=p.coords.latitude.toFixed(6)+", "+p.coords.longitude.toFixed(6),()=>alert("Não consegui acessar o GPS. Cole as coordenadas do Google Maps."),{timeout:8000}):alert("GPS indisponível.")}
 function sh(){if($("#b3").value&&!parseLL($("#b3").value))return alert("Coordenadas inválidas. Use o formato: -5.1234, -40.5678");
  const att=attOut();if(!att)return;
- const o={id:FA.id,titulo:$("#a1").value.trim(),tipo:$("#a2").value,status:$("#a3").value,endereco:$("#a4").value,bairro:$("#a5").value,cidade:$("#a6").value,preco:$("#a7").value,area:$("#a8").value,quartos:$("#a9").value,dono:$("#b1").value,fone:$("#b2").value,ll:parseLL($("#b3").value),obs:$("#b4").value,att};
+ const o={id:FA.id,titulo:$("#a1").value.trim(),tipo:$("#a2").value,status:$("#a3").value,endereco:$("#a4").value,bairro:$("#a5").value,cidade:$("#a6").value,preco:$("#a7").value,area:$("#a8").value,largura:$("#dx").value,altura:$("#dy").value,comprimento:$("#dz").value,quartos:$("#a9").value,dono:$("#b1").value,fone:$("#b2").value,ll:parseLL($("#b3").value),obs:$("#b4").value,att};
  finishFA();closeM();put("imoveis",o)}
 function del(k,id){const r=D[k].find(x=>x.id==id);if(!confirm("Excluir definitivamente"+((r&&r.att&&r.att.length)?" (e os "+r.att.length+" anexos)":"")+"?"))return;
  if(FA)cancelFA();
