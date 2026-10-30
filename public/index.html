@@ -153,7 +153,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--ink);box-shadow:0 0 0
 .f{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
 .f label{display:block;margin-bottom:4px;font-size:13px;font-weight:500;color:var(--ink2)}
 .f .full{grid-column:1/-1}
-.dims{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 14px}@media (max-width:360px){.dims{grid-template-columns:1fr}}
+.dims{display:grid;grid-template-columns:repeat(2,1fr);gap:12px 14px}@media (max-width:360px){.dims{grid-template-columns:1fr}}
 .f label.btn{display:inline-flex;margin:0;color:var(--ink);font-size:13px}
 .fh{grid-column:1/-1;margin-top:10px;padding-top:16px;border-top:1px solid var(--line);font:600 17px var(--serif)}
 @media (max-width:360px){.f{grid-template-columns:1fr}}@media (max-width:480px){.m{padding:0;align-items:flex-end}.m>div{border-radius:10px 10px 0 0;max-height:94vh;overflow:auto;padding-bottom:calc(22px + env(safe-area-inset-bottom,0px))}}
@@ -229,6 +229,8 @@ input.hl,select.hl{border-color:var(--ok);background:color-mix(in srgb,var(--ok)
 <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
 <symbol id="i-clip" viewBox="0 0 24 24"><path d="M20 11l-8.5 8.5a5 5 0 01-7-7L13 4a3.5 3.5 0 015 5l-8.5 8.5a2 2 0 01-3-3L14 7"/></symbol>
 <symbol id="i-scan" viewBox="0 0 24 24"><path d="M4 8V5a1 1 0 011-1h3M16 4h3a1 1 0 011 1v3M20 16v3a1 1 0 01-1 1h-3M8 20H5a1 1 0 01-1-1v-3"/><path d="M8 10h8M8 14h5"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></symbol>
+<symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="1.5"/><path d="M16 8V4H4v12h4"/></symbol>
 <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></symbol>
 </defs></svg>
 
@@ -335,9 +337,9 @@ function housesV(){const f=F.h,q=f.q.toLowerCase();
  ${(f.q||f.t||f.s)?`<p class="count">${L.length} resultado(s) · <button class="lnk" onclick="F.h={q:'',t:'',s:''};render()">limpar filtros</button></p>`:""}
  ${L.length?L.map(h=>{const im=(h.att||[]).find(a=>isImg(a)&&(a.thumb||a.url));
   return item(h,`<div class="th">${im?`<img src="${esc(im.thumb||im.url)}" alt="" loading="lazy">`:I(IC[h.tipo]||"home")}</div>`,esc(h.titulo||"Sem título"),esc([h.tipo,h.bairro].filter(Boolean).join(" · ")),`<div class="pr">${money(h.preco)}</div>${st(h.status)}`,
-  kv([["Endereço",esc([h.endereco,h.bairro,h.cidade].filter(Boolean).join(", "))],["Medidas (X × Y × Z)",(h.largura||h.altura||h.comprimento)?[h.largura,h.altura,h.comprimento].map(v=>v?nf(v):"—").join(" × ")+" m":""],["Área",h.area?nf(h.area)+" m²":""],["Quartos",esc(h.quartos)],["Proprietário",esc(h.dono)],["Telefone",esc(h.fone)]])
+  kv([["Endereço",esc([h.endereco,h.bairro,h.cidade].filter(Boolean).join(", "))],["Medidas (largura × comprimento)",(h.largura||h.comprimento)?[h.largura,h.comprimento].map(v=>v?nf(v):"—").join(" × ")+" m":""],["Área",h.area?nf(h.area)+" m²":""],["Quartos",esc(h.quartos)],["Proprietário",esc(h.dono)],["Telefone",esc(h.fone)]])
   +(h.obs?`<p class="obs">${esc(h.obs)}</p>`:"")+attView(h.att)
-  +`<div class="row">${h.ll?`<a class="btn sm" target="_blank" rel="noopener" href="https://www.google.com/maps?q=${h.ll[0]},${h.ll[1]}">${I("pin")}Abrir no Maps</a>`:""}${h.fone?`<a class="btn sm" target="_blank" rel="noopener" href="https://wa.me/55${String(h.fone).replace(/\D/g,"")}">${I("chat")}Proprietário</a>`:""}<button class="btn sm p" onclick="fh('${h.id}')">${I("edit")}Editar</button></div>`)}).join(""):`<p class="empty">Nenhum imóvel encontrado.</p>`}`}
+  +`<div class="row">${h.ll?`<a class="btn sm" target="_blank" rel="noopener" href="https://www.google.com/maps?q=${h.ll[0]},${h.ll[1]}">${I("pin")}Abrir no Maps</a>`:""}${h.fone?`<a class="btn sm" target="_blank" rel="noopener" href="https://wa.me/55${String(h.fone).replace(/\D/g,"")}">${I("chat")}Proprietário</a>`:""}<button class="btn sm" onclick="shareRec('h','${h.id}')">${I("share")}Compartilhar</button><button class="btn sm p" onclick="fh('${h.id}')">${I("edit")}Editar</button></div>`)}).join(""):`<p class="empty">Nenhum imóvel encontrado.</p>`}`}
 
 function mapV(){window._P=D.houses.filter(h=>h.ll);return window._P.length?`<div id="lmap"></div>`:`<p class="empty">Nenhum imóvel com localização. Edite um imóvel e informe as coordenadas.</p>`}
 function drawMap(){if(LM){LM.remove();LM=null}const el=$("#lmap");if(!el)return;if(!window.L){el.innerHTML='<p class="empty" style="padding:30px">Mapa indisponível (sem internet?).</p>';return}
@@ -394,11 +396,11 @@ function fh(id){const h=D.houses.find(x=>x.id==id)||{tipo:"Casa",status:"Dispon�
  ${inp("a4","Endereço",h.endereco,"text","full")}${inp("a5","Bairro",h.bairro)}${inp("a6","Cidade",h.cidade)}
  ${inp("a7","Preço (R$)",h.preco,"number")}${inp("a9","Quartos",h.quartos,"number")}
  <div class="fh">Medidas <small style="font:400 13px var(--sans);color:var(--mu)">em metros</small></div>
- <div class="full dims"><div><label for="dx">Largura (X)</label><input id="dx" type="number" step="0.01" min="0" inputmode="decimal" value="${esc(h.largura)}" oninput="calcA()"></div><div><label for="dy">Altura (Y)</label><input id="dy" type="number" step="0.01" min="0" inputmode="decimal" value="${esc(h.altura)}"></div><div><label for="dz">Compr. (Z)</label><input id="dz" type="number" step="0.01" min="0" inputmode="decimal" value="${esc(h.comprimento)}" oninput="calcA()"></div></div>
+ <div class="full dims"><div><label for="dx">Largura (X)</label><input id="dx" type="number" step="0.01" min="0" inputmode="decimal" value="${esc(h.largura)}" oninput="calcA()"></div><div><label for="dz">Comprimento (Z)</label><input id="dz" type="number" step="0.01" min="0" inputmode="decimal" value="${esc(h.comprimento)}" oninput="calcA()"></div></div>
  ${inp("a8","Área (m²)",h.area,"number")}<div class="hint" id="ahint" style="align-self:end;padding-bottom:10px"></div>
  <div class="fh" style="margin-top:4px">Proprietário e localização</div>
  ${inp("b1","Proprietário",h.dono)}${inp("b2","Telefone do proprietário",h.fone,"tel")}
- <div class="full"><label for="b3">Localização (cole “lat, lng” do Google Maps)</label><input id="b3" value="${h.ll?h.ll.join(", "):""}"><button class="lnk" style="margin-top:6px" onclick="gps()">usar minha localização atual</button></div>
+ <div class="full"><label for="b3">Localização</label><input id="b3" value="${h.ll?h.ll.join(", "):""}" placeholder="cole as coordenadas ou o link do Google Maps"></div>
  <div class="full"><label for="b4">Observações</label><textarea id="b4" rows="3">${esc(h.obs)}</textarea></div>
  ${attEditor("Fotos e vídeos do imóvel, escritura, matrícula, IPTU, planta, contrato…")}</div>${actions("sh",id,"houses")}`);drawAtt()}
 const nf=v=>Number(v).toLocaleString("pt-BR",{maximumFractionDigits:2});
@@ -408,7 +410,7 @@ function calcA(){const x=parseFloat($("#dx").value),z=parseFloat($("#dz").value)
 function gps(){navigator.geolocation?navigator.geolocation.getCurrentPosition(p=>$("#b3").value=p.coords.latitude.toFixed(6)+", "+p.coords.longitude.toFixed(6),()=>alert("Não consegui acessar o GPS. Cole as coordenadas do Google Maps."),{timeout:8000}):alert("GPS indisponível.")}
 function sh(){if($("#b3").value&&!parseLL($("#b3").value))return alert("Coordenadas inválidas. Use o formato: -5.1234, -40.5678");
  const att=attOut();if(!att)return;
- const o={id:FA.id,titulo:$("#a1").value.trim(),tipo:$("#a2").value,status:$("#a3").value,endereco:$("#a4").value,bairro:$("#a5").value,cidade:$("#a6").value,preco:$("#a7").value,area:$("#a8").value,largura:$("#dx").value,altura:$("#dy").value,comprimento:$("#dz").value,quartos:$("#a9").value,dono:$("#b1").value,fone:$("#b2").value,ll:parseLL($("#b3").value),obs:$("#b4").value,att};
+ const o={id:FA.id,titulo:$("#a1").value.trim(),tipo:$("#a2").value,status:$("#a3").value,endereco:$("#a4").value,bairro:$("#a5").value,cidade:$("#a6").value,preco:$("#a7").value,area:$("#a8").value,largura:$("#dx").value,comprimento:$("#dz").value,quartos:$("#a9").value,dono:$("#b1").value,fone:$("#b2").value,ll:parseLL($("#b3").value),obs:$("#b4").value,att};
  finishFA();closeM();put("imoveis",o)}
 function del(k,id){const r=D[k].find(x=>x.id==id);if(!confirm("Excluir definitivamente"+((r&&r.att&&r.att.length)?" (e os "+r.att.length+" anexos)":"")+"?"))return;
  if(FA)cancelFA();
@@ -456,7 +458,7 @@ function clientsV(){const f=F.c,q=f.q.toLowerCase();
   const body=CF.map(([t,fs])=>{const p=fs.filter(x=>x[0]!="nome"&&x[0]!="obs"&&x[0]!="status"&&c[x[0]]!=null&&c[x[0]]!=="");return p.length?`<div class="lbl">${t}</div>${kv(p.map(x=>[x[1].replace(/\?$/,"").replace(" (R$)",""),esc(fmtV(x,c[x[0]]))]))}`:""}).join("");
   return item(c,`<div class="th">${esc(ini)}</div>`,esc(c.nome),esc([c.objetivo,c.tipo,c.cpf].filter(Boolean).join(" · ")),`<div class="pr">${money(c.orcamento||c.valorCasa)}</div>${st(c.status)}`,
   (body||`<p class="meta">Sem outros dados.</p>`)+(c.obs?`<div class="lbl">Observações</div><p class="obs" style="margin:0">${esc(c.obs)}</p>`:"")+attView(c.att)
-  +`<div class="row">${c.fone?`<a class="btn sm" target="_blank" rel="noopener" href="https://wa.me/55${onlyD(c.fone)}">${I("chat")}WhatsApp</a>`:""}<button class="btn sm p" onclick="fc('${c.id}')">${I("edit")}Editar</button></div>`)}).join(""):`<p class="empty">Nenhum cliente encontrado.</p>`}`}
+  +`<div class="row">${c.fone?`<a class="btn sm" target="_blank" rel="noopener" href="https://wa.me/55${onlyD(c.fone)}">${I("chat")}WhatsApp</a>`:""}<button class="btn sm" onclick="shareRec('c','${c.id}')">${I("share")}Compartilhar</button><button class="btn sm p" onclick="fc('${c.id}')">${I("edit")}Editar</button></div>`)}).join(""):`<p class="empty">Nenhum cliente encontrado.</p>`}`}
 
 function fc(id){const c=D.clients.find(x=>x.id==id)||{status:"Novo contato",objetivo:"Comprar"};startFA("clientes",c);
  const openS=new Set(["Dados pessoais","Atendimento"]);
@@ -522,6 +524,43 @@ function aiErr(e){const m=(e&&(e.code||"")+" "+(e.message||""))||"";
  if(/quota|429|resource.?exhausted/i.test(m))return "limite gratuito atingido. Espere um minuto e tente de novo (o limite diário zera no dia seguinte).";
  if(/billing|blaze/i.test(m))return "este modelo pede plano pago. Troque o primeiro item de AI_MODELS no index.html por um modelo gratuito.";
  return m.slice(0,200)||"erro desconhecido"}
+
+/* ===== compartilhar cadastro em mensagem ===== */
+function textoImovel(h){const L=[`*${h.titulo||"Imóvel"}*`],add=(k,v)=>{if(v!==""&&v!=null)L.push(`*${k}:* ${v}`)};
+ add("Tipo",h.tipo);add("Situação",h.status);add("Preço",h.preco?money(h.preco):"");
+ add("Endereço",[h.endereco,h.bairro,h.cidade].filter(Boolean).join(", "));
+ add("Medidas",(h.largura||h.comprimento)?`${h.largura?nf(h.largura):"—"} m × ${h.comprimento?nf(h.comprimento):"—"} m`:"");
+ add("Área",h.area?nf(h.area)+" m²":"");add("Quartos",h.quartos);
+ add("Proprietário",h.dono);add("Telefone do proprietário",h.fone);
+ if(h.ll)add("Localização",`https://www.google.com/maps?q=${h.ll[0]},${h.ll[1]}`);
+ if(h.obs)L.push("",h.obs);
+ const n=(h.att||[]).length;if(n)L.push("",`(${n} anexo(s) no cadastro)`);
+ return L.join("\n")}
+function textoCliente(c){const L=[`*${c.nome||"Cliente"}*`];
+ if(c.fgts)L.push(`*FGTS:* ${c.fgts}`);
+ CF.forEach(([t,fs])=>{const p=fs.filter(f=>f[0][0]!="_"&&!["nome","obs","fgts"].includes(f[0])&&c[f[0]]!=null&&c[f[0]]!=="");
+  if(!p.length)return;L.push("",`— ${t.toUpperCase()} —`);p.forEach(f=>L.push(`${f[1].replace(/\?$/,"").replace(" (R$)","")}: ${fmtV(f,c[f[0]])}`))});
+ if(c.obs)L.push("","— OBSERVAÇÕES —",c.obs);
+ const n=(c.att||[]).length;if(n)L.push("",`(${n} documento(s) anexado(s) no cadastro)`);
+ return L.join("\n")}
+let SHR=null;
+function shareRec(k,id){const o=(k=="h"?D.houses:D.clients).find(x=>x.id==id);if(!o)return;
+ const med=(o.att||[]).filter(isMed),docs=(o.att||[]).filter(a=>!isMed(a));SHR={k,o};
+ const canFiles=!!(navigator.canShare&&navigator.share);
+ openM(`<h3>Compartilhar ${k=="h"?"imóvel":"cliente"}</h3>
+ <p class="hint" style="margin:0 0 8px">Confira o texto — você pode apagar o que não quiser enviar.</p>
+ <textarea id="shtx" rows="14" style="font-size:14px;line-height:1.45">${esc(k=="h"?textoImovel(o):textoCliente(o))}</textarea>
+ ${k=="c"?`<p class="hint" style="color:var(--warn)">Atenção: a mensagem inclui dados pessoais (CPF, RG, renda…). Envie só para quem precisa.</p>`:""}
+ ${canFiles&&(o.att||[]).length?`<label class="ck" style="display:flex;gap:9px;align-items:center;margin-top:12px;font-size:14px;cursor:pointer"><input type="checkbox" id="shf" style="width:18px;height:18px;min-height:0" ${med.length?"checked":""}> Enviar junto ${med.length?`as ${med.length} foto(s)/vídeo(s)`:""}${med.length&&docs.length?" e ":""}${docs.length?`os ${docs.length} documento(s)`:""}</label>`:""}
+ <div class="row" style="margin-top:18px">${navigator.share?`<button class="btn p" onclick="shareGo()">${I("share")}Compartilhar…</button>`:""}<button class="btn ${navigator.share?"":"p"}" onclick="window.open('https://wa.me/?text='+encodeURIComponent($('#shtx').value),'_blank')">${I("chat")}WhatsApp</button><button class="btn" onclick="shareCopy()">${I("copy")}Copiar texto</button><button class="btn" onclick="closeM()">Fechar</button></div>
+ <p class="hint" id="shst"></p>`)}
+async function shareCopy(){const t=$("#shtx").value;try{await navigator.clipboard.writeText(t)}catch(e){$("#shtx").select();document.execCommand("copy")}$("#shst").textContent="Texto copiado. Cole onde quiser."}
+async function shareGo(){const t=$("#shtx").value,o=SHR&&SHR.o,data={text:t};
+ try{if($("#shf")&&$("#shf").checked&&o){$("#shst").textContent="Preparando os arquivos…";
+   const files=[];for(const a of o.att||[]){try{const u=await fileURL(a),b=await (await fetch(u)).blob();files.push(new File([b],a.nome,{type:a.tipo||b.type}))}catch(e){console.warn(e)}}
+   if(files.length&&navigator.canShare({files}))data.files=files;else if(files.length)$("#shst").textContent="Este aparelho não aceita enviar esses arquivos; vai só o texto."}
+  await navigator.share(data);$("#shst").textContent=""}
+ catch(e){if(e.name!="AbortError"){$("#shst").textContent="Não deu para compartilhar por aqui. Use “WhatsApp” ou “Copiar texto”.";console.warn(e)}else $("#shst").textContent=""}}
 
 render();
 </script>
