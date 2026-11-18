@@ -6,24 +6,24 @@
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Darling Soares"><meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>Darling Soares · Corretora de Imóveis</title>
+<title>Darling Soares - Corretores</title>
 <link rel="icon" type="image/png" href="img/favicon.png">
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.css">
 <style>
 :root{color-scheme:light;
 /* Elegante imobiliário: papel marfim quente, tinta grafite (o cinza do S), laranja da marca (o D) só nos destaques.
    Layout: título grande, cartões com foto, barra de abas flutuante de vidro. */
---paper:#f6f2ec;--sheet:#fff;--soft:#efe8de;--ink:#1d1b18;--ink2:#4b4741;--mu:#8b847a;--line:#e8e0d5;--line2:#d7cdbf;
+--paper:#f6f2ec;--sheet:#fff;--soft:#efe8de;--ink:#1a1815;--ink2:#3a3631;--mu:#6c655b;--line:#e8e0d5;--line2:#d7cdbf;
 --ac:#e8611c;--act:#c4500f;--onac:#fff;--ok:#3f7a3a;--warn:#a8701a;--info:#3b5f86;--bad:#b3341f;--band:#1d1b18;
 --champ:#b08a5a;--vidro:rgba(255,253,250,.72);--vidro-borda:rgba(255,255,255,.85);--vidro-luz:rgba(255,255,255,.95);
 --sombra:0 18px 40px -22px rgba(52,38,20,.35),0 2px 6px -2px rgba(52,38,20,.08);--pill:#1d1b18;--onpill:#fff;
 --mola:cubic-bezier(.32,.72,0,1);--ressalto:cubic-bezier(.34,1.56,.64,1);
 --serif:"Fraunces",Georgia,"Times New Roman",serif;--wide:"Manrope",var(--sans);--sans:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif}
 @media (prefers-color-scheme:dark){:root{color-scheme:dark;
---paper:#12100e;--sheet:#1c1916;--soft:#27231f;--ink:#f4eee6;--ink2:#d2c9bd;--mu:#9a9184;--line:#2d2824;--line2:#3d3630;
+--paper:#12100e;--sheet:#1c1916;--soft:#27231f;--ink:#f7f2ea;--ink2:#e0d8cc;--mu:#b0a698;--line:#2d2824;--line2:#3d3630;
 --ac:#f07a35;--act:#ff9c5e;--band:#0d0c0a;--vidro:rgba(34,30,26,.66);--vidro-borda:rgba(255,255,255,.1);--vidro-luz:rgba(255,255,255,.18);
 --sombra:0 18px 40px -20px rgba(0,0,0,.8);--pill:#f4eee6;--onpill:#1d1b18;--champ:#cfa874}}
 
@@ -225,7 +225,12 @@ input.hl,select.hl{border-color:var(--ok);background:color-mix(in srgb,var(--ok)
    App (18/11/2026): visual elegante imobiliário. Fica por cima do estilo de cima, sem mudar as funções.
    ===================================================================================================== */
 html{-webkit-tap-highlight-color:transparent}
-body{background:var(--paper);font-size:15px;padding-bottom:calc(104px + env(safe-area-inset-bottom,0px))}
+body{background:var(--paper);font-size:16px;font-weight:500;padding-bottom:calc(104px + env(safe-area-inset-bottom,0px))}
+label,.f label,.box label{font-weight:600!important;color:var(--ink2)!important}
+.meta,.hint,.kv small,.count,.st,.cartao small,.ln small,.mc-tx small{font-weight:500}
+.meta,.ln small,.cartao small{font-size:13.5px}
+.kv div,.obs,.doc span{font-weight:500;color:var(--ink)}
+input,select,textarea{font-weight:500}
 .wrap{padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
 @media (display-mode:standalone){body{overscroll-behavior-y:contain}}
 
@@ -460,6 +465,92 @@ input.erro:focus-visible{outline-color:var(--bad)}
 .dica-ios button{width:34px;height:34px;display:grid;place-items:center;border:0;border-radius:50%;background:var(--soft);color:var(--ink2);cursor:pointer}
 .dica-ios button .ic{width:15px;height:15px}
 
+/* conta: avatar no topo, entrar com Google, criar conta, minha conta */
+.top button.avatar{width:40px;height:40px;padding:0;display:grid;place-items:center;border:0;border-radius:50%;color:#fff;font:700 14px var(--sans);
+ background:linear-gradient(135deg,#f6923f,var(--ac) 55%,#3b3835);box-shadow:0 6px 14px -6px rgba(232,97,28,.7)}
+.avatar.grande{display:grid;place-items:center;flex:none;width:58px;height:58px;border-radius:50%;color:#fff;font:700 20px var(--sans);background:linear-gradient(135deg,#f6923f,var(--ac) 55%,#3b3835)}
+.abas-login{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;margin-bottom:16px;border-radius:16px;background:var(--soft)}
+.abas-login button{min-height:42px;border:0;border-radius:12px;background:none;color:var(--mu);font:700 15px var(--sans);cursor:pointer;transition:background-color .25s,color .25s}
+.abas-login button.on{background:var(--sheet);color:var(--ink);box-shadow:0 2px 8px -3px rgba(0,0,0,.2)}
+.btn.social{width:100%;min-height:50px;gap:10px;background:var(--sheet);border:1px solid var(--line2);color:var(--ink);font-size:15.5px;font-weight:700}
+.btn.social svg{width:20px;height:20px}
+.ou{display:flex;align-items:center;gap:12px;margin:16px 0 4px;color:var(--mu);font-size:13px;font-weight:600}
+.ou::before,.ou::after{content:"";flex:1;height:1px;background:var(--line2)}
+.dica-senha{font-weight:500;color:var(--mu);font-size:12px;margin-left:6px}
+.esqueci{display:block;margin:14px auto 0;font-size:14px}
+.termos{margin:16px 0 0;text-align:center;font-size:12.5px;color:var(--mu)}.termos a{color:var(--act);font-weight:600}
+.erro-login.ok{background:color-mix(in srgb,var(--ok) 10%,var(--sheet));border-color:color-mix(in srgb,var(--ok) 30%,transparent)}
+.erro-login.ok svg{stroke:var(--ok)}.erro-login.ok b{color:var(--ok)}
+.conta-topo{display:flex;align-items:center;gap:14px;margin:-4px 0 18px}
+.conta-topo b{display:block;font:600 20px var(--serif)}.conta-topo small{color:var(--mu);font-size:13.5px}
+.conta-links{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:22px;padding-top:16px;border-top:1px solid var(--line);font-size:14px}
+.conta-links a{color:var(--ink2);font-weight:600}
+.lnk.perigo{color:var(--bad);font-weight:700}
+.btn.perigo-cheio{background:var(--bad);border-color:var(--bad);color:#fff}
+
+/* boas-vindas (primeira abertura) */
+html.com-bv{overflow:hidden}
+.bv{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;background:radial-gradient(120% 70% at 100% 0%,color-mix(in srgb,var(--ac) 18%,transparent),transparent 60%),radial-gradient(100% 60% at 0% 100%,color-mix(in srgb,var(--champ) 24%,transparent),transparent 60%),var(--paper);
+ padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px);transition:opacity .55s ease,transform .6s var(--mola)}
+.bv.saindo{opacity:0;transform:scale(1.04)}
+.bv-abertura{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transition:opacity .5s ease,transform .7s var(--mola)}
+.bv.telas .bv-abertura{opacity:0;transform:translateY(-30px) scale(.9);pointer-events:none}
+.bv-logo{width:150px;height:150px;margin-bottom:10px;filter:drop-shadow(0 18px 30px rgba(120,60,20,.25))}
+.bv-d{transform-origin:190px 256px;animation:bv-d .9s var(--ressalto) both .15s}
+.bv-s{fill:none;stroke:#4a4744;stroke-width:46;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:520;stroke-dashoffset:520;animation:bv-s 1s cubic-bezier(.6,.1,.3,1) forwards .75s}
+.bv-nome{font:600 38px/1 var(--serif);letter-spacing:-.025em;color:var(--ink);animation:subir .8s var(--mola) both 1.35s}
+.bv-sub{font:800 12px var(--sans);letter-spacing:.42em;text-transform:uppercase;color:var(--champ);animation:subir .8s var(--mola) both 1.55s}
+@keyframes bv-d{from{opacity:0;transform:translateX(-60px) scale(.6)}}
+@keyframes bv-s{to{stroke-dashoffset:0}}
+.bv-telas{flex:1;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;opacity:0;transition:opacity .5s ease .2s}
+.bv-telas::-webkit-scrollbar{display:none}
+.bv.telas .bv-telas{opacity:1}
+.bv-tela{flex:0 0 100%;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 28px}
+.bv-tela h2{font:600 clamp(28px,7.5vw,36px)/1.08 var(--serif);letter-spacing:-.02em;margin:34px 0 10px;color:var(--ink);text-wrap:balance}
+.bv-tela p{max-width:330px;margin:0;font-size:16px;line-height:1.55;color:var(--ink2)}
+.bv-tela h2,.bv-tela p,.bv-arte{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .7s var(--mola)}
+.bv-tela.ativa h2,.bv-tela.ativa p,.bv-tela.ativa .bv-arte{opacity:1;transform:none}
+.bv-tela.ativa h2{transition-delay:.1s}.bv-tela.ativa p{transition-delay:.2s}
+.bv-arte{position:relative;width:220px;height:170px}
+/* arte 1: cartões de imóveis empilhando */
+.bv-cartoes i{position:absolute;left:30px;width:160px;height:110px;border-radius:20px;background:var(--sheet);border:1px solid var(--line);box-shadow:var(--sombra);
+ background-image:linear-gradient(135deg,#9cc3e6 0%,#f3d9b8 60%,#8fae73 100%);background-size:100% 62%;background-repeat:no-repeat}
+.bv-cartoes i:nth-child(1){top:44px;transform:rotate(-8deg) translateX(-18px);opacity:.6}
+.bv-cartoes i:nth-child(2){top:30px;transform:rotate(6deg) translateX(16px);opacity:.8}
+.bv-cartoes i:nth-child(3){top:18px}
+.bv-tela.ativa .bv-cartoes i{animation:bv-pilha .8s var(--ressalto) both}
+.bv-tela.ativa .bv-cartoes i:nth-child(2){animation-delay:.12s}.bv-tela.ativa .bv-cartoes i:nth-child(3){animation-delay:.24s}
+@keyframes bv-pilha{from{opacity:0;transform:translateY(40px) rotate(0)}}
+/* arte 2: mapa com alfinetes caindo */
+.bv-mapa{border-radius:24px;overflow:hidden;background:color-mix(in srgb,var(--soft) 70%,var(--sheet));border:1px solid var(--line)}
+.bv-mapa svg{position:absolute;inset:0;width:100%;height:100%}
+.bv-mapa path{fill:none;stroke:color-mix(in srgb,var(--champ) 60%,var(--line2));stroke-width:5;stroke-linecap:round}
+.bv-pino{position:absolute;left:var(--x);top:var(--y);width:30px;height:30px;margin:-30px 0 0 -15px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--ac);border:3px solid #fff;box-shadow:0 6px 12px -4px rgba(0,0,0,.35)}
+.bv-pino::after{content:"+";position:absolute;right:-9px;top:-9px;width:16px;height:16px;border-radius:50%;background:#fff;color:var(--ac);font:800 13px/16px var(--sans);text-align:center;transform:rotate(45deg)}
+.bv-tela.ativa .bv-pino{animation:bv-cair .6s var(--ressalto) both var(--d)}
+@keyframes bv-cair{from{opacity:0;margin-top:-80px}}
+/* arte 3: clientes chegando */
+.bv-clientes{display:flex;flex-direction:column;gap:10px;justify-content:center}
+.bv-clientes span{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:18px;background:var(--sheet);border:1px solid var(--line);box-shadow:var(--sombra)}
+.bv-clientes b{display:grid;place-items:center;width:34px;height:34px;border-radius:12px;background:var(--soft);font:600 13px var(--serif)}
+.bv-clientes i{flex:1;height:9px;border-radius:5px;background:linear-gradient(90deg,var(--line2),transparent)}
+.bv-tela.ativa .bv-clientes span{animation:bv-entra .6s var(--ressalto) both var(--d)}
+@keyframes bv-entra{from{opacity:0;transform:translateX(60px)}}
+/* arte 4: escudo com o certo se desenhando */
+.bv-seguro svg{width:120px;height:140px;margin:15px auto 0;display:block}
+.bv-seguro .esc{fill:color-mix(in srgb,var(--ac) 14%,var(--sheet));stroke:var(--ac);stroke-width:5;stroke-linejoin:round}
+.bv-seguro .ok{fill:none;stroke:var(--ok);stroke-width:9;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:80;stroke-dashoffset:80}
+.bv-tela.ativa .bv-seguro .ok{animation:bv-s .6s ease forwards .45s}
+.bv-tela.ativa .bv-seguro svg{animation:bv-pilha .7s var(--ressalto) both}
+/* rodapé: pular, pontinhos e próximo */
+.bv-rodape{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;padding:16px 22px 22px;opacity:0;transition:opacity .5s ease .3s}
+.bv.telas .bv-rodape{opacity:1}
+.bv-pular{justify-self:start;border:0;background:none;color:var(--mu);font:700 15px var(--sans);padding:12px 4px;cursor:pointer}
+.bv-pontos{display:flex;gap:7px}.bv-pontos i{width:7px;height:7px;border-radius:4px;background:var(--line2);transition:width .4s var(--mola),background-color .3s}
+.bv-pontos i.on{width:24px;background:var(--ac)}
+.bv-prox{justify-self:end;min-width:120px}
+@media (prefers-reduced-motion:reduce){.bv-s{stroke-dashoffset:0}.bv-seguro .ok{stroke-dashoffset:0}}
+
 /* movimento */
 @keyframes subir{from{opacity:0;transform:translateY(16px) scale(.985)}}
 @keyframes desenhar{from{stroke-dashoffset:var(--comp,600)}}
@@ -507,7 +598,7 @@ input.erro:focus-visible{outline-color:var(--bad)}
 <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></symbol>
 </defs></svg>
 
-<div class="band" id="band"><div class="wrap"><div class="top"><a class="brand" href="#" onclick="go('i');return false"><img src="img/marca-ds.svg" alt="DS" width="36" height="36"><span><b>Darling Soares</b><small>Corretora de imóveis</small></span></a><span class="titulo-barra" id="tbar" aria-hidden="true"></span><span class="who" id="mail"></span><button onclick="logout()">Sair</button></div></div></div>
+<div class="band" id="band"><div class="wrap"><div class="top"><a class="brand" href="#" onclick="go('i');return false"><img src="img/marca-ds.svg" alt="DS" width="36" height="36"><span><b>Darling Soares</b><small>Corretores</small></span></a><span class="titulo-barra" id="tbar" aria-hidden="true"></span><span class="who" id="mail"></span><button class="avatar" id="avatar" onclick="abrirConta()" aria-label="Minha conta">·</button></div></div></div>
 <nav class="nav" id="nav">
  <i class="pill" aria-hidden="true"></i>
  <button data-t="i"><svg class="ic"><use href="#i-book"/></svg><span>Início</span></button>
@@ -580,6 +671,7 @@ setTimeout(()=>{if(U===undefined&&!FAIL)window.onFail({code:"tempo esgotado",mes
   d.innerHTML=`<img src="img/app-192.png" alt="" width="44" height="44"><p><b>Instale o app no iPhone</b>No Safari, toque em <svg viewBox="0 0 24 24" aria-label="Compartilhar"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg> e depois em <b>Adicionar à Tela de Início</b>.</p><button type="button" aria-label="Fechar aviso">${I("x")}</button>`;
   d.querySelector("button").onclick=()=>{try{localStorage.setItem("dica-ios","1")}catch(e){}d.classList.add("saindo");setTimeout(()=>d.remove(),300)};
   setTimeout(()=>document.body.append(d),1500)}
+ setTimeout(boasVindas,0);   // depois de o script inteiro carregar (as telas são definidas mais abaixo)
  /* app instalável: o service worker guarda só o visual (os dados vêm sempre do Firebase) */
  if("serviceWorker" in navigator&&location.protocol!="file:")addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
 })();
@@ -593,12 +685,12 @@ function render(){try{
  document.body.classList.toggle("out",!U||!!FAIL);const v=$("#v");
  if(FAIL){head("Algo deu errado","Sem conexão");v.innerHTML=failV();return}
  if(U===undefined){head("Um momento","Abrindo…");v.innerHTML=`<p class="empty"><span class="spin"></span>Conectando ao Firebase</p>`;return}
- if(!U){$("#head").innerHTML=`<div class="entrada"><svg class="desenho" viewBox="0 0 260 120" aria-hidden="true"><path style="--comp:760" d="M6 112H254M34 112V58L92 18l58 40v54M70 112V80h44v32M178 112V44h52v68M190 60h10M210 60h10M190 78h10M210 78h10M190 96h10M210 96h10"/><path class="sol" style="--comp:80" d="M222 22a10 10 0 1 0 0.1 0"/></svg><img src="img/marca-ds.svg" alt=""><b>Darling Soares</b><small>Corretora de imóveis</small></div>`;$("#mail").textContent="";v.innerHTML=loginV();return}
+ if(!U){$("#head").innerHTML=`<div class="entrada"><svg class="desenho" viewBox="0 0 260 120" aria-hidden="true"><path style="--comp:760" d="M6 112H254M34 112V58L92 18l58 40v54M70 112V80h44v32M178 112V44h52v68M190 60h10M210 60h10M190 78h10M210 78h10M190 96h10M210 96h10"/><path class="sol" style="--comp:80" d="M222 22a10 10 0 1 0 0.1 0"/></svg><img src="img/marca-ds.svg" alt=""><b>Darling Soares</b><small>Corretores</small></div>`;$("#mail").textContent="";v.innerHTML=loginV();return}
  $("#mail").textContent=U.email||"";
  document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("on",b.dataset.t==tab));$("#nav").style.setProperty("--i",ABAS.indexOf(tab));
  AT={};
  if(tab=="i"){const h=new Date().getHours(),d=new Date().toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long"});
-  head(d,(h<12?"Bom dia":h<18?"Boa tarde":"Boa noite")+".",`<button class="btn" onclick="fc()">${I("plus")}Cliente</button><button class="btn p" onclick="fh()">${I("plus")}Imóvel</button>`);v.innerHTML=homeV()}
+  head(d,(h<12?"Bom dia":h<18?"Boa tarde":"Boa noite")+(primeiroNome()?", "+esc(primeiroNome()):"")+".",`<button class="btn" onclick="fc()">${I("plus")}Cliente</button><button class="btn p" onclick="fh()">${I("plus")}Imóvel</button>`);v.innerHTML=homeV()}
  if(tab=="h"){head(D.houses.length+(D.houses.length==1?" cadastrado":" cadastrados"),"Imóveis",bNH);v.innerHTML=housesV()}
  if(tab=="c"){head(D.clients.length+(D.clients.length==1?" pessoa":" pessoas"),"Clientes",`<button class="btn p" onclick="fc()">${I("plus")}Novo cliente</button>`);v.innerHTML=clientsV()}
  if(tab=="m"){head("Onde estão","Mapa",bNH);v.innerHTML=mapV();drawMap()}
@@ -612,7 +704,26 @@ function go(t,open){const de=tab,calmo=matchMedia("(prefers-reduced-motion: redu
  try{navigator.vibrate&&navigator.vibrate(6)}catch(e){}
  document.startViewTransition(trocar).finished.finally(()=>delete document.documentElement.dataset.dir)}
 function cascata(){document.querySelectorAll("#v .stats>div,#v .types button,#v .cartao,#v .grupo,#v .it").forEach((e,i)=>{if(i<14){e.style.setProperty("--n",i);e.classList.remove("cascata");void e.offsetWidth;e.classList.add("cascata")}})}
-function loginV(){return `<div class="box" id="caixa-login"><label for="em">E-mail</label><input id="em" type="email" autocomplete="username" inputmode="email" oninput="limparErro()" onkeydown="if(event.key=='Enter')$('#pw').focus()"><label for="pw">Senha</label><div class="campo-senha"><input id="pw" type="password" autocomplete="current-password" oninput="limparErro()" onkeydown="if(event.key=='Enter')login()"><button type="button" class="olho" onclick="verSenha(this)" aria-label="Mostrar senha" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path class="risco" d="M4 4l16 16"/></svg></button></div><p class="erro-login" id="erl" role="alert" hidden></p><div class="row"><button class="btn p" id="entrar" onclick="login()">Entrar</button></div></div>`}
+let MODO="entrar";window.MODO_LOGIN=()=>MODO;
+const GOOGLE_G='<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M22.5 12.3c0-.8-.1-1.5-.2-2.3H12v4.3h5.9a5 5 0 0 1-2.2 3.3v2.7h3.6c2.1-1.9 3.2-4.8 3.2-8z"/><path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.6-2.7c-1 .7-2.2 1.1-3.7 1.1-2.9 0-5.3-1.9-6.2-4.6H2.1v2.8A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.8 14.1a6.6 6.6 0 0 1 0-4.2V7.1H2.1a11 11 0 0 0 0 9.8z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2A11 11 0 0 0 2.1 7.1l3.7 2.8C6.7 7.3 9.1 5.4 12 5.4z"/></svg>';
+function loginV(){const criar=MODO=="criar";
+ return `<div class="box" id="caixa-login">
+ <div class="abas-login" role="tablist"><button type="button" role="tab" aria-selected="${!criar}" class="${criar?"":"on"}" onclick="trocarModo('entrar')">Entrar</button><button type="button" role="tab" aria-selected="${criar}" class="${criar?"on":""}" onclick="trocarModo('criar')">Criar conta</button></div>
+ <button type="button" class="btn social" id="bgoogle" onclick="comGoogle()">${GOOGLE_G}<span>Continuar com Google</span></button>
+ <div class="ou"><span>ou com e-mail</span></div>
+ ${criar?`<label for="nm">Seu nome</label><input id="nm" autocomplete="name" oninput="limparErro()">`:""}
+ <label for="em">E-mail</label><input id="em" type="email" autocomplete="${criar?"email":"username"}" inputmode="email" oninput="limparErro()" onkeydown="if(event.key=='Enter')$('#pw').focus()">
+ <label for="pw">Senha${criar?' <small class="dica-senha">mínimo de 8 caracteres</small>':""}</label><div class="campo-senha"><input id="pw" type="password" autocomplete="${criar?"new-password":"current-password"}" oninput="limparErro()" onkeydown="if(event.key=='Enter')login()"><button type="button" class="olho" onclick="verSenha(this)" aria-label="Mostrar senha" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path class="risco" d="M4 4l16 16"/></svg></button></div>
+ <p class="erro-login" id="erl" role="alert" hidden></p>
+ <div class="row"><button class="btn p" id="entrar" onclick="login()">${criar?"Criar minha conta":"Entrar"}</button></div>
+ ${criar?"":`<button type="button" class="lnk esqueci" onclick="esqueciSenha()">Esqueci a senha</button>`}
+ <p class="termos">Ao continuar, você concorda com a <a href="/privacidade" target="_blank" rel="noopener">Política de Privacidade</a>.</p>
+ </div>`}
+function trocarModo(m){if(m==MODO)return;MODO=m;const em=$("#em")&&$("#em").value;$("#v").innerHTML=loginV();if(em)$("#em").value=em;$(m=="criar"?"#nm":"#em").focus()}
+function avisoOk(t,d){const p=$("#erl");if(!p)return;p.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span><b>${t}</b>${d}</span>`;p.className="erro-login ok";p.hidden=false}
+async function esqueciSenha(){const em=$("#em").value.trim();if(!em){window.erroLogin("auth/missing-email");return}
+ try{await window.esqueci(em);avisoOk("Enviamos um e-mail para você.",`Abra o link enviado para ${esc(em)} e crie uma senha nova. Veja também a caixa de spam.`)}catch(e){window.erroLogin(e.code)}}
+async function comGoogle(){const b=$("#bgoogle");b.disabled=true;try{await window.entrarComGoogle()}catch(e){if(!/popup-closed|cancelled-popup/.test(e.code||""))window.erroLogin(e.code)}finally{if($("#bgoogle"))$("#bgoogle").disabled=false}}
 /* login: mostrar a senha, e o erro dentro do cartão (no lugar da janela de alerta) */
 function verSenha(b){const c=$("#pw"),mostrar=c.type=="password",[i,f]=[c.selectionStart,c.selectionEnd];c.type=mostrar?"text":"password";
  b.setAttribute("aria-pressed",mostrar);b.setAttribute("aria-label",mostrar?"Esconder senha":"Mostrar senha");c.focus();try{c.setSelectionRange(i,f)}catch(e){}}
@@ -622,13 +733,22 @@ const ERROS_LOGIN={"auth/invalid-email":["Esse e-mail não parece certo.","Confi
  "auth/wrong-password":["Senha incorreta.","Confira a senha e tente de novo.","pw"],
  "auth/user-not-found":["E-mail não cadastrado.","Confira se é o e-mail que você usa no app.","em"],
  "auth/too-many-requests":["Muitas tentativas seguidas.","Por segurança, espere alguns minutos e tente de novo.",""],
- "auth/network-request-failed":["Sem conexão com a internet.","Confira o Wi-Fi ou os dados móveis e tente de novo.",""]};
+ "auth/network-request-failed":["Sem conexão com a internet.","Confira o Wi-Fi ou os dados móveis e tente de novo.",""],
+ "auth/missing-email":["Falta o e-mail.","Digite o e-mail da sua conta para receber o link de nova senha.","em"],
+ "auth/missing-name":["Falta o seu nome.","Ele aparece na sua conta e nas mensagens que você compartilha.","nm"],
+ "auth/email-already-in-use":["Esse e-mail já tem conta.","Toque em Entrar, ou em Esqueci a senha se não lembrar.","em"],
+ "auth/weak-password":["Senha fraca.","Use pelo menos 8 caracteres, misturando letras e números.","pw"],
+ "auth/operation-not-allowed":["Esse jeito de entrar ainda não foi ativado.","Use o e-mail e a senha por enquanto.",""],
+ "auth/account-exists-with-different-credential":["Esse e-mail já entra de outro jeito.","Entre com e-mail e senha, ou com o Google, como da primeira vez.","em"],
+ "auth/popup-blocked":["O navegador bloqueou a janela do Google.","Permita janelas deste site e tente de novo.",""],
+ "auth/unauthorized-domain":["Entrar com o Google não está liberado neste endereço.","Use o e-mail e a senha por enquanto.",""],
+ "auth/requires-recent-login":["Por segurança, confirme que é você.","Digite a senha (ou entre de novo com o Google) e repita.",""]};
 window.erroLogin=code=>{const [t,d,campo]=ERROS_LOGIN[code]||["Não foi possível entrar.","Tente de novo em instantes.",""],p=$("#erl"),cx=$("#caixa-login");if(!p)return;
  p.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5v.01"/></svg><span><b>${t}</b>${d}</span>`;p.hidden=false;
- ["em","pw"].forEach(k=>$("#"+k).classList.toggle("erro",campo=="ambos"||campo==k));
+ ["nm","em","pw"].forEach(k=>{const c=$("#"+k);if(c)c.classList.toggle("erro",campo=="ambos"&&k!="nm"||campo==k)});p.className="erro-login";
  cx.classList.remove("tremer");void cx.offsetWidth;cx.classList.add("tremer");try{navigator.vibrate&&navigator.vibrate([30,40,30])}catch(e){}
- const alvo=campo=="em"?"#em":"#pw";if(campo)$(alvo).focus()};
-function limparErro(){const p=$("#erl");if(p&&!p.hidden){p.hidden=true;document.querySelectorAll("#em,#pw").forEach(c=>c.classList.remove("erro"))}}
+ const alvo=campo=="ambos"?"#pw":"#"+campo;if(campo&&$(alvo))$(alvo).focus()};
+function limparErro(){const p=$("#erl");if(p&&!p.hidden){p.hidden=true;document.querySelectorAll("#nm,#em,#pw").forEach(c=>c.classList.remove("erro"))}}
 function failV(){const e=FAIL,c=e.code||"",hint=location.protocol=="file:"?"Você abriu o arquivo direto do computador. Publique no Firebase Hosting ou use um servidor local (npx serve).":c=="permission-denied"?"O Firestore recusou o acesso. Publique as regras do arquivo firestore.rules e confirme que você está logada.":"Confira se o conexao.js está na mesma pasta do index.html e se o firebaseConfig está preenchido.";
  return `<div class="box" style="max-width:520px"><p>${hint}</p><p class="meta">Detalhe técnico: ${esc(c)} ${esc(e.message||"")}</p><div class="row"><button class="btn p" onclick="location.reload()">Tentar de novo</button><button class="btn" onclick="demo()">Ver demonstração</button></div></div>`}
 
@@ -765,6 +885,69 @@ function mmGps(){if(!navigator.geolocation){$("#mmhint").textContent="GPS indisp
  navigator.geolocation.getCurrentPosition(p=>mmMarcar([p.coords.latitude,p.coords.longitude],true,"Marcado onde você está. Arraste o alfinete para ajustar."),
   ()=>{$("#mmhint").textContent="Não consegui acessar a localização. Permita o acesso nas configurações."},{timeout:10000,enableHighAccuracy:true})}
 function mmDoCampo(){const ll=parseLL($("#b3").value);if(ll&&window.MM){if(!MMK.getElement().isConnected)MMK.setLngLat([ll[1],ll[0]]).addTo(MM);else MMK.setLngLat([ll[1],ll[0]]);MM.flyTo({center:[ll[1],ll[0]],zoom:16,duration:600});$("#mmdica").hidden=true}}
+
+/* ---------- conta de cada corretora: perfil, sair e excluir a conta (exigência da Play Store) ---------- */
+let P={};
+window.onPerfil=d=>{P=d||{};const a=$("#avatar");if(a)a.textContent=iniciais();if(tab=="i")render()};
+const primeiroNome=()=>String(P.nome||(U&&U.displayName)||"").trim().split(/\s+/)[0]||"";
+const iniciais=()=>{const n=String(P.nome||(U&&U.displayName)||(U&&U.email)||"?").trim();return n.split(/[\s@.]+/).filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase()};
+function abrirConta(){const em=(U&&U.email)||"",google=U&&(U.providerData||[]).some(x=>x.providerId=="google.com");
+ openM(`<h3>Minha conta</h3>
+ <div class="conta-topo"><span class="avatar grande">${esc(iniciais())}</span><div><b>${esc(P.nome||(U&&U.displayName)||"Sem nome")}</b><small>${esc(em)}${google?" · Google":""}</small></div></div>
+ <div class="f">${inp("p1","Nome",P.nome||(U&&U.displayName)||"","text","full")}${inp("p2","CRECI",P.creci||"")}${inp("p3","WhatsApp",P.fone||"","tel")}
+ ${inp("p4","Cidade onde atua",P.cidade||"","text","full")}</div>
+ <p class="hint">Esses dados são só seus: cada conta tem os próprios imóveis, clientes e arquivos, e ninguém mais tem acesso.</p>
+ <div class="row"><button class="btn p" onclick="salvarConta()">Salvar</button><button class="btn" onclick="closeM();logout()">Sair da conta</button></div>
+ <div class="conta-links"><a href="/privacidade" target="_blank" rel="noopener">Política de Privacidade</a><button type="button" class="lnk perigo" onclick="pedirExclusao()">Excluir minha conta</button></div>`)}
+async function salvarConta(){const o={nome:$("#p1").value.trim(),creci:$("#p2").value.trim(),fone:$("#p3").value.trim(),cidade:$("#p4").value.trim()};
+ try{await window.salvarPerfil(o);closeM()}catch(e){alert("Não foi possível salvar: "+(e.code||e.message))}}
+function pedirExclusao(){const google=U&&(U.providerData||[]).some(x=>x.providerId=="google.com");
+ $("#mb").innerHTML=`<h3>Excluir a conta</h3>
+ <p>Isso apaga <b>para sempre</b> a sua conta e tudo que está nela: imóveis, clientes, fotos e documentos. Não dá para desfazer.</p>
+ <p class="hint">Se quiser guardar alguma coisa, compartilhe ou baixe antes.</p>
+ ${google?"":`<label for="xs">Sua senha</label><input id="xs" type="password" autocomplete="current-password">`}
+ <label for="xc">Para confirmar, digite EXCLUIR</label><input id="xc" autocomplete="off" autocapitalize="characters">
+ <p class="erro-login" id="xerr" role="alert" hidden></p>
+ <div class="row"><button class="btn perigo-cheio" id="xbtn" onclick="excluirConta()">Excluir tudo</button><button class="btn" onclick="abrirConta()">Voltar</button></div>`}
+async function excluirConta(){const ok=$("#xc").value.trim().toUpperCase()=="EXCLUIR",er=$("#xerr"),b=$("#xbtn");
+ const falha=t=>{er.innerHTML=`<span><b>${t}</b></span>`;er.hidden=false};
+ if(!ok)return falha("Digite EXCLUIR para confirmar.");
+ b.disabled=true;b.textContent="Apagando…";
+ try{await window.reautenticar($("#xs")?$("#xs").value:"");await window.apagarConta();closeM();alert("Sua conta e todos os dados foram apagados.")}
+ catch(e){b.disabled=false;b.textContent="Excluir tudo";
+  falha(/wrong-password|invalid-credential/.test(e.code||"")?"Senha incorreta.":/popup-closed/.test(e.code||"")?"Confirmação cancelada.":"Não foi possível excluir: "+(e.code||e.message))}}
+
+/* ---------- boas-vindas: aparece uma vez, na primeira vez que o app é aberto ---------- */
+const BV_TELAS=[
+ {t:"Seus imóveis, lindos e organizados",d:"Fotos, documentos, medidas e o proprietário de cada imóvel, num lugar só.",arte:`<div class="bv-arte bv-cartoes"><i></i><i></i><i></i></div>`},
+ {t:"Tudo no mapa",d:"Veja onde está cada casa e terreno. O + mostra o que ainda está disponível.",arte:`<div class="bv-arte bv-mapa"><svg viewBox="0 0 200 140" aria-hidden="true"><path d="M0 40 Q60 20 100 60 T200 50M0 100 Q80 80 120 120M60 0 Q70 70 40 140M150 0 Q140 70 170 140"/></svg><span class="bv-pino" style="--x:28%;--y:34%;--d:.2s"></span><span class="bv-pino" style="--x:62%;--y:52%;--d:.45s"></span><span class="bv-pino" style="--x:44%;--y:72%;--d:.7s"></span></div>`},
+ {t:"Clientes e visitas na mão",d:"Quem quer comprar ou alugar, o que procura e as visitas marcadas. Um toque e você está no WhatsApp.",arte:`<div class="bv-arte bv-clientes"><span style="--d:.1s"><b>MS</b><i></i></span><span style="--d:.3s"><b>JL</b><i></i></span><span style="--d:.5s"><b>AP</b><i></i></span></div>`},
+ {t:"Seus dados, só seus",d:"Cada conta é separada e protegida. Só você vê os seus imóveis e clientes.",arte:`<div class="bv-arte bv-seguro"><svg viewBox="0 0 120 140" aria-hidden="true"><path class="esc" d="M60 8l46 18v38c0 32-20 56-46 68C34 120 14 96 14 64V26z"/><path class="ok" d="M38 70l16 16 30-32"/></svg></div>`}];
+function boasVindas(){let visto=false;try{visto=!!localStorage.getItem("ds-boasvindas")}catch(e){}
+ if(visto)return;
+ const el=document.createElement("div");el.className="bv";el.setAttribute("role","dialog");el.setAttribute("aria-label","Boas-vindas");
+ el.innerHTML=`<div class="bv-abertura">
+   <svg class="bv-logo" viewBox="0 0 512 512" aria-hidden="true"><defs><linearGradient id="bvl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f6923f"/><stop offset="1" stop-color="#df5418"/></linearGradient></defs>
+    <path class="bv-d" fill="url(#bvl)" fill-rule="evenodd" d="M92 128 H190 A128 128 0 0 1 190 384 H92 Z M146 264 L196 220 L246 264 V328 H146 Z"/>
+    <g transform="translate(362 262) scale(.84) translate(-341 -262)"><path class="bv-s" d="M404 196 C 388 160, 300 154, 292 208 C 284 262, 404 256, 404 316 C 404 378, 308 386, 278 338"/></g></svg>
+   <b class="bv-nome">Darling Soares</b><small class="bv-sub">Corretores</small></div>
+  <div class="bv-telas">${BV_TELAS.map((x,i)=>`<section class="bv-tela" aria-label="${i+1} de ${BV_TELAS.length}">${x.arte}<h2>${x.t}</h2><p>${x.d}</p></section>`).join("")}</div>
+  <div class="bv-rodape"><button type="button" class="bv-pular" onclick="fecharBoasVindas()">Pular</button><div class="bv-pontos">${BV_TELAS.map((_,i)=>`<i class="${i?"":"on"}"></i>`).join("")}</div><button type="button" class="btn p bv-prox" onclick="proxBoasVindas()">Próximo</button></div>`;
+ document.body.append(el);document.documentElement.classList.add("com-bv");
+ const telas=el.querySelector(".bv-telas");
+ telas.addEventListener("scroll",()=>marcarBV(Math.round(telas.scrollLeft/telas.clientWidth)),{passive:true});
+ /* a abertura (logo se montando) dura ~2,6 s; depois entram as telas */
+ setTimeout(()=>{el.classList.add("telas");el.querySelector(".bv-tela").classList.add("ativa")},2600)}
+function marcarBV(i){const el=$(".bv");if(!el)return;
+ el.querySelectorAll(".bv-pontos i").forEach((p,j)=>p.classList.toggle("on",j==i));
+ el.querySelectorAll(".bv-tela").forEach((t,j)=>t.classList.toggle("ativa",j==i));
+ el.querySelector(".bv-prox").textContent=i==BV_TELAS.length-1?"Começar":"Próximo"}
+function proxBoasVindas(){const el=$(".bv");if(!el)return;if(!el.classList.contains("telas")){el.classList.add("telas");el.querySelector(".bv-tela").classList.add("ativa");return}
+ const t=el.querySelector(".bv-telas"),i=Math.round(t.scrollLeft/t.clientWidth);
+ if(i>=BV_TELAS.length-1)return fecharBoasVindas();marcarBV(i+1);t.scrollTo({left:(i+1)*t.clientWidth,behavior:"smooth"});try{navigator.vibrate&&navigator.vibrate(6)}catch(e){}}
+function fecharBoasVindas(){const el=$(".bv");if(!el)return;try{localStorage.setItem("ds-boasvindas","1")}catch(e){}
+ el.classList.add("saindo");document.documentElement.classList.remove("com-bv");setTimeout(()=>el.remove(),600);
+ if(!U){MODO="criar";if($("#caixa-login"))$("#v").innerHTML=loginV()}}
 function keep(){const v=$("#q"),p=v.selectionStart;render();const n=$("#q");n.focus();n.setSelectionRange(p,p)}
 const tg=e=>{e.setAttribute("aria-expanded",e.classList.toggle("open"))},kd=(e,t)=>{if(e.target===t&&(e.key=="Enter"||e.key==" ")){e.preventDefault();tg(t)}};
 
@@ -993,12 +1176,33 @@ try{
  const {auth,db}=await import("./conexao.js"),V="https://www.gstatic.com/firebasejs/12.19.0/";
  const A=await import(V+"firebase-auth.js"),S=await import(V+"firebase-firestore.js");
  let un=[];const path=(c,id)=>S.doc(db,"users",auth.currentUser.uid,c,id);
- window.login=async()=>{const em=g("em").value.trim(),pw=g("pw").value,b=g("entrar");
+ A.useDeviceLanguage(auth);
+ const perfilRef=uid=>S.doc(db,"users",uid,"perfil","dados");
+ window.login=async()=>{const criar=window.MODO_LOGIN&&window.MODO_LOGIN()=="criar",nm=g("nm")?g("nm").value.trim():"",em=g("em").value.trim(),pw=g("pw").value,b=g("entrar"),txt=b.textContent;
+  if(criar&&!nm){window.erroLogin("auth/missing-name");return}
   if(!em){window.erroLogin("auth/invalid-email");return}if(!pw){window.erroLogin("auth/missing-password");return}
-  b.disabled=true;b.textContent="Entrando…";
-  try{await A.signInWithEmailAndPassword(auth,em,pw)}catch(e){window.erroLogin(e.code)}finally{if(g("entrar")){b.disabled=false;b.textContent="Entrar"}}};
+  if(criar&&pw.length<8){window.erroLogin("auth/weak-password");return}
+  b.disabled=true;b.textContent=criar?"Criando a conta…":"Entrando…";
+  try{if(criar){const c=await A.createUserWithEmailAndPassword(auth,em,pw);await A.updateProfile(c.user,{displayName:nm});
+    await S.setDoc(perfilRef(c.user.uid),{nome:nm,criadoEm:Date.now()},{merge:true})}
+   else await A.signInWithEmailAndPassword(auth,em,pw)}
+  catch(e){window.erroLogin(e.code)}finally{if(g("entrar")){b.disabled=false;b.textContent=txt}}};
+ /* Google: janela por cima; se o aparelho não abrir janela (app instalado), troca de página e volta */
+ window.entrarComGoogle=async()=>{const p=new A.GoogleAuthProvider();p.setCustomParameters({prompt:"select_account"});
+  try{const r=await A.signInWithPopup(auth,p);await S.setDoc(perfilRef(r.user.uid),{nome:r.user.displayName||"",criadoEm:Date.now()},{merge:true})}
+  catch(e){if(/popup-blocked|operation-not-supported|web-storage-unsupported/.test(e.code||""))return A.signInWithRedirect(auth,p);throw e}};
+ A.getRedirectResult(auth).then(r=>{if(r&&r.user)S.setDoc(perfilRef(r.user.uid),{nome:r.user.displayName||""},{merge:true})}).catch(e=>window.erroLogin&&window.erroLogin(e.code));
+ window.esqueci=em=>A.sendPasswordResetEmail(auth,em);
+ window.salvarPerfil=o=>Promise.all([S.setDoc(perfilRef(auth.currentUser.uid),o,{merge:true}),o.nome?A.updateProfile(auth.currentUser,{displayName:o.nome}):null]);
+ /* excluir a conta: confirma que é a pessoa, apaga todos os dados e depois o login */
+ window.reautenticar=senha=>{const u=auth.currentUser;
+  if(u.providerData.some(x=>x.providerId=="google.com"))return A.reauthenticateWithPopup(u,new A.GoogleAuthProvider());
+  return A.reauthenticateWithCredential(u,A.EmailAuthProvider.credential(u.email,senha))};
+ window.apagarConta=async()=>{const u=auth.currentUser;un.forEach(f=>f());un=[];
+  for(const c of ["imoveis","clientes","arquivos","perfil"]){const q=await S.getDocs(S.collection(db,"users",u.uid,c));for(const d of q.docs)await S.deleteDoc(d.ref)}
+  await A.deleteUser(u)};
  window.logout=()=>A.signOut(auth);
- window.put=(c,o)=>S.setDoc(path(c,o.id),o).catch(e=>alert("Erro ao salvar: "+e.code));
+ window.put=(c,o)=>{o.atualizadoEm=Date.now();return S.setDoc(path(c,o.id),o).catch(e=>alert("Erro ao salvar: "+e.code))};
  window.rm=(c,id)=>S.deleteDoc(path(c,id)).catch(e=>alert("Erro ao excluir: "+e.code));
  /* arquivos guardados no próprio Firestore, em pedaços de até 900 KB (plano gratuito) */
  const CH=900*1024,fdoc=id=>S.doc(db,"users",auth.currentUser.uid,"arquivos",id);
@@ -1020,7 +1224,8 @@ try{
   }catch(e){last=e;console.warn("modelo",m,e);if(!/not.?found|404|is not supported|unsupported model|invalid model/i.test(e.message||""))throw e}}
   throw last};
  A.onAuthStateChanged(auth,u=>{un.forEach(f=>f());un=[];window.onAuth(u);
-  if(u)[["imoveis","houses"],["clientes","clients"]].forEach(([c,k])=>un.push(S.onSnapshot(S.collection(db,"users",u.uid,c),s=>window.onData(k,s.docs.map(d=>d.data())),e=>window.onFail(e))))},e=>window.onFail(e));
+  if(u)[["imoveis","houses"],["clientes","clients"]].forEach(([c,k])=>un.push(S.onSnapshot(S.collection(db,"users",u.uid,c),s=>window.onData(k,s.docs.map(d=>d.data())),e=>window.onFail(e))));
+  if(u)un.push(S.onSnapshot(perfilRef(u.uid),d=>window.onPerfil(d.exists()?d.data():{}),()=>{}));else window.onPerfil({})},e=>window.onFail(e));
 }catch(e){console.error(e);window.onFail(e)}
 </script>
 </body></html>
