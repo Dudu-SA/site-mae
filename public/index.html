@@ -366,6 +366,25 @@ input:focus,select:focus,textarea:focus{border-color:var(--ac);box-shadow:0 0 0 
  -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-shadow:inset 0 1px 0 var(--vidro-luz),var(--sombra)}
 .out .box .btn.p{width:100%;min-height:52px;font-size:16px;margin-top:18px}
 
+/* login: senha com olho e erro dentro do cartão */
+.campo-senha{position:relative}
+.campo-senha input{padding-right:52px}
+.olho{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:44px;height:44px;display:grid;place-items:center;border:0;background:none;color:var(--mu);border-radius:12px;cursor:pointer}
+.olho svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.olho .risco{opacity:1;transition:opacity .2s}
+.olho[aria-pressed=true]{color:var(--ac)}.olho[aria-pressed=true] .risco{opacity:0}
+.erro-login{display:flex;gap:10px;align-items:flex-start;margin:14px 0 0;padding:12px 14px;border-radius:16px;font-size:13.5px;line-height:1.4;
+ color:var(--ink);background:color-mix(in srgb,var(--bad) 10%,var(--sheet));border:1px solid color-mix(in srgb,var(--bad) 28%,transparent);animation:subir .4s var(--mola) both}
+.erro-login[hidden]{display:none}
+.erro-login svg{flex:none;width:20px;height:20px;margin-top:1px;fill:none;stroke:var(--bad);stroke-width:2;stroke-linecap:round}
+.erro-login b{display:block;color:var(--bad);font-weight:700}
+input.erro{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 5%,var(--sheet))}
+input.erro:focus{border-color:var(--bad);box-shadow:0 0 0 4px color-mix(in srgb,var(--bad) 16%,transparent)}
+input.erro:focus-visible{outline-color:var(--bad)}
+.btn.p:disabled{opacity:.75;cursor:wait}
+@keyframes tremer{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+@media (prefers-reduced-motion:no-preference){.out .box.tremer{animation:tremer .4s ease both}}
+
 /* movimento */
 @keyframes subir{from{opacity:0;transform:translateY(16px) scale(.985)}}
 @keyframes desenhar{from{stroke-dashoffset:var(--comp,600)}}
@@ -508,7 +527,23 @@ function go(t,open){const de=tab,calmo=matchMedia("(prefers-reduced-motion: redu
  try{navigator.vibrate&&navigator.vibrate(6)}catch(e){}
  document.startViewTransition(trocar).finished.finally(()=>delete document.documentElement.dataset.dir)}
 function cascata(){document.querySelectorAll("#v .stats>div,#v .types button,#v .cartao,#v .grupo,#v .it").forEach((e,i)=>{if(i<14){e.style.setProperty("--n",i);e.classList.remove("cascata");void e.offsetWidth;e.classList.add("cascata")}})}
-function loginV(){return `<div class="box"><label for="em">E-mail</label><input id="em" type="email" autocomplete="username"><label for="pw">Senha</label><input id="pw" type="password" autocomplete="current-password" onkeydown="if(event.key=='Enter')login()"><div class="row"><button class="btn p" onclick="login()">Entrar</button></div></div>`}
+function loginV(){return `<div class="box" id="caixa-login"><label for="em">E-mail</label><input id="em" type="email" autocomplete="username" inputmode="email" oninput="limparErro()" onkeydown="if(event.key=='Enter')$('#pw').focus()"><label for="pw">Senha</label><div class="campo-senha"><input id="pw" type="password" autocomplete="current-password" oninput="limparErro()" onkeydown="if(event.key=='Enter')login()"><button type="button" class="olho" onclick="verSenha(this)" aria-label="Mostrar senha" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path class="risco" d="M4 4l16 16"/></svg></button></div><p class="erro-login" id="erl" role="alert" hidden></p><div class="row"><button class="btn p" id="entrar" onclick="login()">Entrar</button></div></div>`}
+/* login: mostrar a senha, e o erro dentro do cartão (no lugar da janela de alerta) */
+function verSenha(b){const c=$("#pw"),mostrar=c.type=="password",[i,f]=[c.selectionStart,c.selectionEnd];c.type=mostrar?"text":"password";
+ b.setAttribute("aria-pressed",mostrar);b.setAttribute("aria-label",mostrar?"Esconder senha":"Mostrar senha");c.focus();try{c.setSelectionRange(i,f)}catch(e){}}
+const ERROS_LOGIN={"auth/invalid-email":["Esse e-mail não parece certo.","Confira se digitou o endereço completo, com @.","em"],
+ "auth/missing-password":["Falta a senha.","Digite a senha para entrar.","pw"],
+ "auth/invalid-credential":["E-mail ou senha incorretos.","Confira os dois e tente de novo.","ambos"],
+ "auth/wrong-password":["Senha incorreta.","Confira a senha e tente de novo.","pw"],
+ "auth/user-not-found":["E-mail não cadastrado.","Confira se é o e-mail que você usa no app.","em"],
+ "auth/too-many-requests":["Muitas tentativas seguidas.","Por segurança, espere alguns minutos e tente de novo.",""],
+ "auth/network-request-failed":["Sem conexão com a internet.","Confira o Wi-Fi ou os dados móveis e tente de novo.",""]};
+window.erroLogin=code=>{const [t,d,campo]=ERROS_LOGIN[code]||["Não foi possível entrar.","Tente de novo em instantes.",""],p=$("#erl"),cx=$("#caixa-login");if(!p)return;
+ p.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16.5v.01"/></svg><span><b>${t}</b>${d}</span>`;p.hidden=false;
+ ["em","pw"].forEach(k=>$("#"+k).classList.toggle("erro",campo=="ambos"||campo==k));
+ cx.classList.remove("tremer");void cx.offsetWidth;cx.classList.add("tremer");try{navigator.vibrate&&navigator.vibrate([30,40,30])}catch(e){}
+ const alvo=campo=="em"?"#em":"#pw";if(campo)$(alvo).focus()};
+function limparErro(){const p=$("#erl");if(p&&!p.hidden){p.hidden=true;document.querySelectorAll("#em,#pw").forEach(c=>c.classList.remove("erro"))}}
 function failV(){const e=FAIL,c=e.code||"",hint=location.protocol=="file:"?"Você abriu o arquivo direto do computador. Publique no Firebase Hosting ou use um servidor local (npx serve).":c=="permission-denied"?"O Firestore recusou o acesso. Publique as regras do arquivo firestore.rules e confirme que você está logada.":"Confira se o conexao.js está na mesma pasta do index.html e se o firebaseConfig está preenchido.";
  return `<div class="box" style="max-width:520px"><p>${hint}</p><p class="meta">Detalhe técnico: ${esc(c)} ${esc(e.message||"")}</p><div class="row"><button class="btn p" onclick="location.reload()">Tentar de novo</button><button class="btn" onclick="demo()">Ver demonstração</button></div></div>`}
 
@@ -779,7 +814,10 @@ try{
  const {auth,db}=await import("./conexao.js"),V="https://www.gstatic.com/firebasejs/12.19.0/";
  const A=await import(V+"firebase-auth.js"),S=await import(V+"firebase-firestore.js");
  let un=[];const path=(c,id)=>S.doc(db,"users",auth.currentUser.uid,c,id);
- window.login=async()=>{try{await A.signInWithEmailAndPassword(auth,g("em").value,g("pw").value)}catch(e){alert("E-mail ou senha incorretos.")}};
+ window.login=async()=>{const em=g("em").value.trim(),pw=g("pw").value,b=g("entrar");
+  if(!em){window.erroLogin("auth/invalid-email");return}if(!pw){window.erroLogin("auth/missing-password");return}
+  b.disabled=true;b.textContent="Entrando…";
+  try{await A.signInWithEmailAndPassword(auth,em,pw)}catch(e){window.erroLogin(e.code)}finally{if(g("entrar")){b.disabled=false;b.textContent="Entrar"}}};
  window.logout=()=>A.signOut(auth);
  window.put=(c,o)=>S.setDoc(path(c,o.id),o).catch(e=>alert("Erro ao salvar: "+e.code));
  window.rm=(c,id)=>S.deleteDoc(path(c,id)).catch(e=>alert("Erro ao excluir: "+e.code));
