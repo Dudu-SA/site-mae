@@ -1,18 +1,31 @@
 <!DOCTYPE html>
 <html lang="pt-BR"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#141414">
+<meta name="theme-color" content="#f6f2ec" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#12100e" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Darling Soares"><meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>Darling Soares · Corretora de Imóveis</title>
 <link rel="icon" type="image/png" href="img/favicon.png">
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=Montserrat:wght@400;500&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
 <style>
 :root{color-scheme:light;
---paper:#f4f3f1;--sheet:#fff;--soft:#ebe9e6;--ink:#161616;--ink2:#454545;--mu:#7b7b7b;--line:#e3e1dd;--line2:#cfccc7;
---ac:#e8611c;--act:#c4500f;--onac:#fff;--ok:#3f7a3a;--warn:#b07415;--info:#3b5f86;--bad:#b3341f;--band:#141414;
---serif:"Zilla Slab",Rockwell,Georgia,serif;--wide:"Montserrat",var(--sans);--sans:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+/* Elegante imobiliário: papel marfim quente, tinta grafite (o cinza do S), laranja da marca (o D) só nos destaques.
+   Layout: título grande, cartões com foto, barra de abas flutuante de vidro. */
+--paper:#f6f2ec;--sheet:#fff;--soft:#efe8de;--ink:#1d1b18;--ink2:#4b4741;--mu:#8b847a;--line:#e8e0d5;--line2:#d7cdbf;
+--ac:#e8611c;--act:#c4500f;--onac:#fff;--ok:#3f7a3a;--warn:#a8701a;--info:#3b5f86;--bad:#b3341f;--band:#1d1b18;
+--champ:#b08a5a;--vidro:rgba(255,253,250,.72);--vidro-borda:rgba(255,255,255,.85);--vidro-luz:rgba(255,255,255,.95);
+--sombra:0 18px 40px -22px rgba(52,38,20,.35),0 2px 6px -2px rgba(52,38,20,.08);--pill:#1d1b18;--onpill:#fff;
+--mola:cubic-bezier(.32,.72,0,1);--ressalto:cubic-bezier(.34,1.56,.64,1);
+--serif:"Fraunces",Georgia,"Times New Roman",serif;--wide:"Manrope",var(--sans);--sans:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif}
+@media (prefers-color-scheme:dark){:root{color-scheme:dark;
+--paper:#12100e;--sheet:#1c1916;--soft:#27231f;--ink:#f4eee6;--ink2:#d2c9bd;--mu:#9a9184;--line:#2d2824;--line2:#3d3630;
+--ac:#f07a35;--act:#ff9c5e;--band:#0d0c0a;--vidro:rgba(34,30,26,.66);--vidro-borda:rgba(255,255,255,.1);--vidro-luz:rgba(255,255,255,.18);
+--sombra:0 18px 40px -20px rgba(0,0,0,.8);--pill:#f4eee6;--onpill:#1d1b18;--champ:#cfa874}}
 
 *{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 var(--sans);padding-bottom:calc(72px + env(safe-area-inset-bottom,0px));-webkit-font-smoothing:antialiased}
@@ -207,6 +220,170 @@ input.hl,select.hl{border-color:var(--ok);background:color-mix(in srgb,var(--ok)
 .err-box{background:color-mix(in srgb,var(--bad) 12%,transparent);color:var(--bad)}
 .warn-box{background:color-mix(in srgb,var(--warn) 14%,transparent);color:var(--ink)}
 .ok-box{background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ink)}
+
+/* =====================================================================================================
+   App (18/11/2026): visual elegante imobiliário. Fica por cima do estilo de cima, sem mudar as funções.
+   ===================================================================================================== */
+html{-webkit-tap-highlight-color:transparent}
+body{background:var(--paper);font-size:15px;padding-bottom:calc(104px + env(safe-area-inset-bottom,0px))}
+.wrap{padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
+@media (display-mode:standalone){body{overscroll-behavior-y:contain}}
+
+/* topo: barra de vidro fixa; o título pequeno aparece quando o grande sai da tela */
+.band{position:sticky;top:0;z-index:15;background:transparent;border-bottom:1px solid transparent;color:var(--ink2);transition:background-color .3s,border-color .3s}
+.band.rolou{background:var(--vidro);border-bottom-color:var(--line);-webkit-backdrop-filter:blur(22px) saturate(170%);backdrop-filter:blur(22px) saturate(170%)}
+.top{min-height:58px;padding:calc(8px + env(safe-area-inset-top,0px)) 0 8px;position:relative}
+.brand{color:var(--ink);transition:opacity .25s}
+.brand img{height:36px;width:36px;border-radius:11px;box-shadow:0 4px 12px -4px rgba(52,38,20,.35)}
+.brand span{transition:opacity .25s}
+.brand b{font:600 18px/1 var(--serif);color:var(--ink);letter-spacing:-.01em}
+.brand small{font:600 9.5px var(--wide);letter-spacing:.24em;color:var(--mu)}
+.titulo-barra{position:absolute;left:50%;transform:translate(-50%,6px);font:600 16px var(--serif);color:var(--ink);opacity:0;pointer-events:none;transition:opacity .25s,transform .35s var(--mola);white-space:nowrap}
+.band.com-titulo .titulo-barra{opacity:1;transform:translate(-50%,0)}
+.band.com-titulo .brand span{opacity:0}
+.top .who{color:var(--mu)}
+.top button{border:1px solid var(--line2);border-radius:999px;padding:7px 14px;color:var(--ink2);background:var(--sheet);font-weight:600;transition:transform .3s var(--ressalto)}
+.top button:active{transform:scale(.92)}
+@media (max-width:520px){.top .who{display:none}.brand img{height:34px;width:34px}.brand b{font-size:17px}}
+
+/* cabeçalho da tela: título grande */
+.head{border-bottom:0;padding:18px 0 14px;align-items:flex-end}
+.eyebrow{font:700 11px var(--wide);letter-spacing:.2em;color:var(--champ)}
+h1{font:600 clamp(36px,9.5vw,52px)/1 var(--serif);letter-spacing:-.025em;margin-top:6px;font-variation-settings:"opsz" 144}
+.head .act{width:100%;margin-left:0}
+@media (min-width:640px){.head .act{width:auto;margin-left:auto}}
+
+/* barra de abas flutuante de vidro, com a pílula que desliza até a aba escolhida */
+.nav{left:max(14px,env(safe-area-inset-left,0px));right:max(14px,env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));
+ margin:0 auto;max-width:460px;padding:6px;border:1px solid var(--vidro-borda);border-radius:30px;background:var(--vidro);
+ -webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);
+ box-shadow:inset 0 1px 0 var(--vidro-luz),var(--sombra);view-transition-name:abas}
+.nav .pill{position:absolute;top:6px;bottom:6px;left:6px;width:calc((100% - 12px)/4);border-radius:24px;background:var(--pill);
+ transform:translateX(calc(var(--i,0)*100%));transition:transform .55s var(--ressalto);box-shadow:0 6px 16px -6px rgba(29,27,24,.55);view-transition-name:pilula}
+.nav button{position:relative;z-index:1;max-width:none;border:0;margin:0;padding:9px 0 8px;border-radius:24px;font-size:11.5px;font-weight:600;color:var(--mu);transition:color .3s,transform .35s var(--ressalto)}
+.nav button .ic{width:22px;height:22px;stroke-width:1.7}
+.nav button.on{color:var(--onpill)}
+.nav button:active{transform:scale(.9)}
+@media (min-width:860px){
+ body{padding-bottom:110px}
+ .nav{position:fixed;justify-content:center;gap:0;padding:6px}
+ .nav button{flex:1;flex-direction:column;gap:3px;font-size:12px;padding:9px 0 8px;border:0}
+ .nav button.on{border:0}
+}
+
+/* botões e campos */
+.btn{min-height:44px;padding:0 18px;border-radius:999px;border-color:var(--line2);font-weight:600;transition:transform .3s var(--ressalto),background-color .2s,border-color .2s}
+.btn:active{transform:scale(.95)}
+.btn.p{background:linear-gradient(135deg,#f38a3e,var(--ac) 55%,#d9531a);border:0;box-shadow:0 8px 20px -10px rgba(232,97,28,.8)}
+.btn.sm{min-height:38px;padding:0 14px}
+input,select,textarea{min-height:48px;border-radius:14px;border-color:var(--line);font-size:16px;padding:10px 14px}
+input:focus,select:focus,textarea:focus{border-color:var(--ac);box-shadow:0 0 0 4px color-mix(in srgb,var(--ac) 16%,transparent)}
+
+/* início: números em cartões, tipos em chips, imóveis em carrossel de fotos */
+.stats{grid-template-columns:repeat(3,1fr);gap:10px;border:0;margin-top:6px}
+.stats>div,.stats>div:first-child{padding:16px 14px 14px;border:1px solid var(--line);border-radius:22px;background:var(--sheet)}
+.stats>div:first-child{background:var(--pill);border-color:transparent}
+.stats>div:first-child b,.stats>div:first-child span{color:var(--onpill)}
+.stats b{font:600 40px/1 var(--serif);letter-spacing:-.02em;font-variation-settings:"opsz" 144}
+.stats span{display:block;margin-top:8px;font-size:12.5px;font-weight:600;line-height:1.25}
+.types{flex-wrap:nowrap;gap:8px;overflow-x:auto;scrollbar-width:none;margin:16px -18px 0;padding:2px 18px 4px}
+.types::-webkit-scrollbar{display:none}
+.types button{flex:none;display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:var(--sheet);font-weight:600;font-size:13.5px;color:var(--ink);transition:transform .3s var(--ressalto)}
+.types button:active{transform:scale(.93)}
+.types button .ic{width:16px;height:16px;color:var(--ac)}
+.types small{font-weight:700}
+.sec{border-bottom:0;margin:30px 0 4px;padding-bottom:6px}
+.sec h2{font:600 23px var(--serif);letter-spacing:-.015em}
+.lnk{font-weight:600;text-decoration:none;color:var(--act)}
+.grupo{background:var(--sheet);border:1px solid var(--line);border-radius:22px;padding:2px 16px}
+.ln{border-bottom:1px solid var(--line);padding:14px 0}
+.grupo .ln:last-child{border-bottom:0}
+.ln>span{font:600 17px/1.3 var(--serif)}
+.ln b{font:600 16px var(--serif)}
+.cartoes{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;margin:8px -18px 0;padding:4px 18px 10px;scroll-padding-inline:18px}
+.cartoes::-webkit-scrollbar{display:none}
+.cartao{flex:0 0 74%;max-width:300px;scroll-snap-align:start;padding:0;border:0;background:none;text-align:left;cursor:pointer;color:var(--ink);transition:transform .35s var(--ressalto)}
+.cartao:active{transform:scale(.97)}
+.capa{position:relative;display:block;aspect-ratio:4/3;border-radius:22px;overflow:hidden;background:linear-gradient(135deg,var(--soft),color-mix(in srgb,var(--champ) 30%,var(--soft)))}
+.capa img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s var(--mola)}
+.capa>.ic{position:absolute;inset:0;margin:auto;width:46px;height:46px;color:color-mix(in srgb,var(--champ) 80%,var(--ink2));stroke-width:1.2}
+.capa .preco{position:absolute;left:10px;bottom:10px;padding:6px 11px;border-radius:999px;background:var(--vidro);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);font:600 15px var(--serif);color:var(--ink)}
+.capa .st{position:absolute;right:10px;top:10px;padding:5px 10px;border-radius:999px;background:var(--vidro);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);font-weight:700}
+.cartao b{display:block;margin-top:10px;font:600 17px/1.25 var(--serif);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cartao small{display:block;margin-top:2px;font-size:13px;color:var(--mu)}
+
+/* listas: cada imóvel com foto vira um cartão; clientes ficam em linhas com avatar */
+.fc{gap:8px;margin:12px 0 6px}
+.fc input{flex:1 1 100%;border-radius:999px;padding-left:44px;background:var(--sheet) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b847a' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M20 20l-4-4'/%3E%3C/svg%3E") 15px 50%/18px no-repeat}
+.fc select{flex:1 1 0;border-radius:999px;font-weight:600;font-size:14px}
+.it{gap:0 14px;padding:12px;margin-top:10px;border:1px solid var(--line);border-radius:22px;background:var(--sheet);transition:transform .35s var(--ressalto),box-shadow .3s}
+.it:active{transform:scale(.985)}
+.it.open{box-shadow:var(--sombra)}
+.it:hover h3{text-decoration:none}
+.th{width:52px;height:52px;border-radius:16px;font:600 19px var(--serif);background:var(--soft);color:var(--ink2)}
+.it h3{font:600 18px/1.25 var(--serif);letter-spacing:-.01em}
+.it:has(.th.cover){grid-template-columns:1fr auto;padding:0;overflow:hidden}
+.th.cover{grid-column:1/-1;width:auto;height:auto;aspect-ratio:16/10;border-radius:0;margin-bottom:12px}
+.th.cover .ic{width:42px;height:42px;stroke-width:1.2;color:color-mix(in srgb,var(--champ) 80%,var(--ink2))}
+.it:has(.th.cover) .tx{padding-left:16px}
+.it:has(.th.cover) .rt{padding-right:16px}
+.it:has(.th.cover) .dd{padding:16px}
+.it:has(.th.cover) .tx,.it:has(.th.cover) .rt{padding-bottom:14px}
+.pr{font:600 18px var(--serif)}
+.st{font-weight:700}
+.dd{padding:14px 0 4px}
+.kv{gap:12px 18px}
+.kv small{font-weight:700;letter-spacing:.06em}
+.lbl{font-weight:700;color:var(--champ)}
+.gal{gap:6px}.gal button{border-radius:14px}
+.empty{text-align:center;padding:36px 12px;border:1px dashed var(--line2);border-radius:22px;margin-top:12px}
+
+/* janelas: folha que sobe de baixo, com alça para arrastar */
+.m{align-items:flex-end;padding:0;background:rgba(20,16,10,.38);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);transition:opacity .35s,visibility .35s}
+.m>div{position:relative;max-width:640px;border:0;border-radius:30px 30px 0 0;max-height:94vh;overflow:auto;padding:30px 20px calc(24px + env(safe-area-inset-bottom,0px));
+ transform:translateY(100%);transition:transform .5s var(--mola);box-shadow:0 -20px 50px -20px rgba(0,0,0,.4)}
+.m.on>div{transform:translateY(var(--arrasto,0px))}
+.m>div.arrastando{transition:none}
+.m>div::before{content:"";position:absolute;top:10px;left:50%;width:40px;height:5px;margin-left:-20px;border-radius:3px;background:var(--line2)}
+.m h3{font:600 30px/1.05 var(--serif);letter-spacing:-.02em}
+@media (min-width:700px){.m{align-items:center;padding:24px}.m>div{border-radius:30px;transform:translateY(40px) scale(.98)}.m.on>div{transform:none}.m>div::before{display:none}}
+.vw{-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.vw img,.vw video{border-radius:16px}
+#lmap{height:calc(100vh - 290px);min-height:360px;border-radius:24px;border:1px solid var(--line);margin-top:10px}
+.pn{background:var(--ac);border-color:var(--sheet)}
+
+/* entrada: o login com a casa desenhada em traço */
+.out{background:radial-gradient(120% 70% at 100% 0%,color-mix(in srgb,var(--ac) 16%,transparent),transparent 60%),radial-gradient(100% 60% at 0% 100%,color-mix(in srgb,var(--champ) 22%,transparent),transparent 60%),var(--paper);min-height:100vh}
+.out .head{padding-top:calc(4vh + env(safe-area-inset-top,0px))}
+.entrada{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%}
+.entrada .desenho{width:min(260px,62vw);height:auto;margin-bottom:4px}
+.entrada .desenho path{fill:none;stroke:var(--ink2);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.entrada .desenho .sol{stroke:var(--ac)}
+.entrada img{width:84px;height:84px;border-radius:24px;box-shadow:0 18px 40px -16px rgba(52,38,20,.5)}
+.entrada b{font:600 34px/1 var(--serif);letter-spacing:-.025em;color:var(--ink);margin-top:8px}
+.entrada small{font:700 10.5px var(--wide);letter-spacing:.3em;text-transform:uppercase;color:var(--champ)}
+.out .box{max-width:420px;padding:22px 20px;border-radius:28px;background:var(--vidro);border:1px solid var(--vidro-borda);
+ -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);box-shadow:inset 0 1px 0 var(--vidro-luz),var(--sombra)}
+.out .box .btn.p{width:100%;min-height:52px;font-size:16px;margin-top:18px}
+
+/* movimento */
+@keyframes subir{from{opacity:0;transform:translateY(16px) scale(.985)}}
+@keyframes desenhar{from{stroke-dashoffset:var(--comp,600)}}
+@keyframes sai-esq{to{transform:translateX(-22%);opacity:0}}@keyframes entra-dir{from{transform:translateX(22%);opacity:0}}
+@keyframes sai-dir{to{transform:translateX(22%);opacity:0}}@keyframes entra-esq{from{transform:translateX(-22%);opacity:0}}
+@media (prefers-reduced-motion:no-preference){
+ .cascata{animation:subir .55s var(--mola) both;animation-delay:calc(var(--n,0)*45ms)}
+ .entrada .desenho path{stroke-dasharray:var(--comp,600);animation:desenhar 2.2s cubic-bezier(.6,.1,.3,1) both}
+ .entrada .desenho .sol{animation-delay:1.2s}
+ .entrada img,.entrada b,.entrada small,.out .box{animation:subir .8s var(--mola) both}
+ .entrada b{animation-delay:.1s}.entrada small{animation-delay:.15s}.out .box{animation-delay:.25s}
+ .tela{view-transition-name:tela}
+ ::view-transition-group(pilula){animation-duration:.55s;animation-timing-function:var(--ressalto)}
+ ::view-transition-old(tela),::view-transition-new(tela){animation-duration:.38s;animation-timing-function:var(--mola)}
+ html[data-dir=frente]::view-transition-old(tela){animation-name:sai-esq}html[data-dir=frente]::view-transition-new(tela){animation-name:entra-dir}
+ html[data-dir=tras]::view-transition-old(tela){animation-name:sai-dir}html[data-dir=tras]::view-transition-new(tela){animation-name:entra-esq}
+ .it:active .capa img,.cartao:active .capa img{transform:scale(1.04)}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style></head><body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -234,14 +411,15 @@ input.hl,select.hl{border-color:var(--ok);background:color-mix(in srgb,var(--ok)
 <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></symbol>
 </defs></svg>
 
-<div class="band"><div class="wrap"><div class="top"><a class="brand" href="#" onclick="go('i');return false"><img src="img/ds.png" alt="DS"><span><b>Darling Soares</b><small>Corretora de imóveis</small></span></a><span class="who" id="mail"></span><button onclick="logout()">Sair</button></div></div></div>
+<div class="band" id="band"><div class="wrap"><div class="top"><a class="brand" href="#" onclick="go('i');return false"><img src="img/marca-ds.svg" alt="DS" width="36" height="36"><span><b>Darling Soares</b><small>Corretora de imóveis</small></span></a><span class="titulo-barra" id="tbar" aria-hidden="true"></span><span class="who" id="mail"></span><button onclick="logout()">Sair</button></div></div></div>
 <nav class="nav" id="nav">
+ <i class="pill" aria-hidden="true"></i>
  <button data-t="i"><svg class="ic"><use href="#i-book"/></svg><span>Início</span></button>
  <button data-t="h"><svg class="ic"><use href="#i-key"/></svg><span>Imóveis</span></button>
  <button data-t="c"><svg class="ic"><use href="#i-users"/></svg><span>Clientes</span></button>
  <button data-t="m"><svg class="ic"><use href="#i-pin"/></svg><span>Mapa</span></button>
 </nav>
-<div class="wrap"><header class="head" id="head"></header><main id="v"></main></div>
+<div class="wrap tela"><header class="head" id="head"></header><main id="v"></main></div>
 <div class="m" id="m"><div id="mb" role="dialog" aria-modal="true" aria-label="Formulário" tabindex="-1"></div></div>
 <div class="vw" id="vw" onclick="if(event.target==this)closeV()"></div>
 
@@ -279,19 +457,41 @@ window.fetchBlob=async a=>MEM[a.path.slice(4)];
 window.lerDoc=()=>new Promise(r=>setTimeout(()=>r({tipoDocumento:"RG (exemplo do modo demonstração)",nome:"JOSÉ CARLOS DA SILVA",cpf:"52998224725",rg:"2009123456 SSP/CE",nasc:"14/03/1988",cidade:"Fortaleza",estado:"CE",avisos:"Modo demonstração: estes dados são fictícios, o documento não foi lido de verdade."}),1400));
 window.logout=()=>location.reload();
 setTimeout(()=>{if(U===undefined&&!FAIL)window.onFail({code:"tempo esgotado",message:"A conexão demorou demais."})},8000);
+
+/* atalhos do ícone (segurar o ícone do app): abre direto em Imóveis, Clientes ou Mapa */
+{const pa=new URLSearchParams(location.search).get("aba");if(["h","c","m"].includes(pa)){tab=pa;history.replaceState(null,"","/")}}
+/* ---------- app (celular): barra do topo, folha que desce arrastando, cascata na primeira carga, instalação ---------- */
+(()=>{
+ const band=$("#band");
+ const rolar=()=>{const h=document.querySelector("#head h1");band.classList.toggle("rolou",scrollY>4);
+  band.classList.toggle("com-titulo",!!h&&!document.body.classList.contains("out")&&h.getBoundingClientRect().bottom<70)};
+ addEventListener("scroll",rolar,{passive:true});
+ /* primeira vez que os dados chegam: os cartões entram em cascata */
+ let primeira=true;const od=window.onData;window.onData=(k,a)=>{od(k,a);if(primeira&&k=="clients"){primeira=false;cascata()}};
+ /* folha (formulários): arrastar a alça para baixo fecha */
+ const m=$("#m"),f=$("#mb");let y0=null,dy=0,t0=0;
+ f.addEventListener("pointerdown",e=>{if(e.target.closest("input,select,textarea,button,a,label")||f.scrollTop>0||e.clientY-f.getBoundingClientRect().top>48)return;
+  y0=e.clientY;dy=0;t0=performance.now();f.classList.add("arrastando");f.setPointerCapture(e.pointerId)});
+ f.addEventListener("pointermove",e=>{if(y0===null)return;dy=Math.max(0,e.clientY-y0);f.style.setProperty("--arrasto",dy+"px")});
+ const solta=()=>{if(y0===null)return;y0=null;f.classList.remove("arrastando");const rapido=dy/Math.max(1,performance.now()-t0)>.6;
+  f.style.removeProperty("--arrasto");if(dy>120||(rapido&&dy>30))closeM()};
+ f.addEventListener("pointerup",solta);f.addEventListener("pointercancel",solta);
+ /* app instalável: o service worker guarda só o visual (os dados vêm sempre do Firebase) */
+ if("serviceWorker" in navigator&&location.protocol!="file:")addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+})();
 function demo(){D={houses:[{id:"d3",titulo:"Casa com quintal e varanda",tipo:"Casa",status:"Disponível",endereco:"Rua das Flores, 120",bairro:"Centro",cidade:"Fortaleza",preco:350000,quartos:3,area:140,dono:"Sr. Raimundo",fone:"(85) 98888-0000",ll:[-3.7319,-38.5267],obs:"Escritura em dia. Aceita financiamento.",att:[]},{id:"d2",titulo:"Apartamento vista mar",tipo:"Apartamento",status:"Reservado",bairro:"Meireles",cidade:"Fortaleza",preco:620000,quartos:2,area:78,ll:[-3.7236,-38.4890]},{id:"d1",titulo:"Terreno 300 m²",tipo:"Terreno",status:"Vendido",bairro:"Cidade Nova",preco:90000,area:300,ll:[-3.7700,-38.5500]}],clients:[{id:"c3",nome:"Maria Souza",fone:"(85) 90000-0000",status:"Visita marcada",objetivo:"Comprar",tipo:"Casa",orcamento:400000,bairros:"Centro, Aldeota"},{id:"c2",nome:"João Lima",status:"Novo contato",objetivo:"Alugar",orcamento:1800},{id:"c1",nome:"Ana Paula Ribeiro",status:"Negociando",objetivo:"Comprar",tipo:"Apartamento",orcamento:650000}]};FAIL=null;U={email:"modo demonstração"};render()}
 
 /* telas */
 const TABS=["i","h","c","m"];
-function head(eb,t,act=""){$("#head").innerHTML=`<div><span class="eyebrow">${eb}</span><h1>${t}</h1></div>${act?`<div class="act">${act}</div>`:""}`}
+function head(eb,t,act=""){$("#head").innerHTML=`<div><span class="eyebrow">${eb}</span><h1>${t}</h1></div>${act?`<div class="act">${act}</div>`:""}`;const tb=$("#tbar");if(tb)tb.textContent=String(t).replace(/<[^>]*>/g,"")}
 const bNH=`<button class="btn p" onclick="fh()">${I("plus")}Novo imóvel</button>`;
 function render(){try{
  document.body.classList.toggle("out",!U||!!FAIL);const v=$("#v");
  if(FAIL){head("Algo deu errado","Sem conexão");v.innerHTML=failV();return}
  if(U===undefined){head("Um momento","Abrindo…");v.innerHTML=`<p class="empty"><span class="spin"></span>Conectando ao Firebase</p>`;return}
- if(!U){$("#head").innerHTML=`<div><img class="biglogo" src="img/logo.png" alt="Darling Soares — Corretora de Imóveis"><span class="eyebrow" style="margin-top:22px">Área da corretora</span></div>`;$("#mail").textContent="";v.innerHTML=loginV();return}
+ if(!U){$("#head").innerHTML=`<div class="entrada"><svg class="desenho" viewBox="0 0 260 120" aria-hidden="true"><path style="--comp:760" d="M6 112H254M34 112V58L92 18l58 40v54M70 112V80h44v32M178 112V44h52v68M190 60h10M210 60h10M190 78h10M210 78h10M190 96h10M210 96h10"/><path class="sol" style="--comp:80" d="M222 22a10 10 0 1 0 0.1 0"/></svg><img src="img/marca-ds.svg" alt=""><b>Darling Soares</b><small>Corretora de imóveis</small></div>`;$("#mail").textContent="";v.innerHTML=loginV();return}
  $("#mail").textContent=U.email||"";
- document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("on",b.dataset.t==tab));
+ document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("on",b.dataset.t==tab));$("#nav").style.setProperty("--i",ABAS.indexOf(tab));
  AT={};
  if(tab=="i"){const h=new Date().getHours(),d=new Date().toLocaleDateString("pt-BR",{weekday:"long",day:"numeric",month:"long"});
   head(d,(h<12?"Bom dia":h<18?"Boa tarde":"Boa noite")+".",`<button class="btn" onclick="fc()">${I("plus")}Cliente</button><button class="btn p" onclick="fh()">${I("plus")}Imóvel</button>`);v.innerHTML=homeV()}
@@ -300,7 +500,14 @@ function render(){try{
  if(tab=="m"){head("Onde estão","Mapa",bNH);v.innerHTML=mapV();drawMap()}
  if(OPEN){const e=document.querySelector(`.it[data-id="${OPEN}"]`);OPEN=null;if(e)setTimeout(()=>e.scrollIntoView({block:"center"}),30)}
 }catch(e){console.error(e);$("#v").innerHTML=`<p class="empty">Erro na tela: ${esc(e.message)}</p>`}}
-function go(t,open){tab=t;OPEN=open||null;render();if(!open)scrollTo({top:0})}
+const ABAS=["i","h","c","m"];
+function go(t,open){const de=tab,calmo=matchMedia("(prefers-reduced-motion: reduce)").matches;
+ const trocar=()=>{tab=t;OPEN=open||null;render();if(!open)scrollTo({top:0});cascata()};
+ if(t==de||calmo||!document.startViewTransition){trocar();return}
+ document.documentElement.dataset.dir=ABAS.indexOf(t)>ABAS.indexOf(de)?"frente":"tras";
+ try{navigator.vibrate&&navigator.vibrate(6)}catch(e){}
+ document.startViewTransition(trocar).finished.finally(()=>delete document.documentElement.dataset.dir)}
+function cascata(){document.querySelectorAll("#v .stats>div,#v .types button,#v .cartao,#v .grupo,#v .it").forEach((e,i)=>{if(i<14){e.style.setProperty("--n",i);e.classList.remove("cascata");void e.offsetWidth;e.classList.add("cascata")}})}
 function loginV(){return `<div class="box"><label for="em">E-mail</label><input id="em" type="email" autocomplete="username"><label for="pw">Senha</label><input id="pw" type="password" autocomplete="current-password" onkeydown="if(event.key=='Enter')login()"><div class="row"><button class="btn p" onclick="login()">Entrar</button></div></div>`}
 function failV(){const e=FAIL,c=e.code||"",hint=location.protocol=="file:"?"Você abriu o arquivo direto do computador. Publique no Firebase Hosting ou use um servidor local (npx serve).":c=="permission-denied"?"O Firestore recusou o acesso. Publique as regras do arquivo firestore.rules e confirme que você está logada.":"Confira se o conexao.js está na mesma pasta do index.html e se o firebaseConfig está preenchido.";
  return `<div class="box" style="max-width:520px"><p>${hint}</p><p class="meta">Detalhe técnico: ${esc(c)} ${esc(e.message||"")}</p><div class="row"><button class="btn p" onclick="location.reload()">Tentar de novo</button><button class="btn" onclick="demo()">Ver demonstração</button></div></div>`}
@@ -308,11 +515,12 @@ function failV(){const e=FAIL,c=e.code||"",hint=location.protocol=="file:"?"Voc�
 function homeV(){const H=D.houses,C=D.clients,vis=C.filter(c=>c.status=="Visita marcada"),disp=H.filter(h=>h.status=="Disponível").length;
  const ln=(o,t,a,b,c)=>`<button class="ln" onclick="go('${t}','${o.id}')"><span>${esc(a)}</span><small>${b}</small><b>${c}</b></button>`;
  return `<div class="stats"><div><b>${disp}</b><span>disponíveis</span></div><div><b>${C.filter(c=>!["Fechado","Perdido"].includes(c.status)).length}</b><span>clientes ativos</span></div><div><b>${vis.length}</b><span>visitas marcadas</span></div></div>
- <div class="types">${TIPOS.map(t=>`<button onclick="F.h.t='${t}';go('h')">${t}<small>${H.filter(h=>h.tipo==t).length}</small></button>`).join("")}</div>
+ <div class="types">${TIPOS.map(t=>`<button onclick="F.h.t='${t}';go('h')">${I(IC[t]||"home")}${t}<small>${H.filter(h=>h.tipo==t).length}</small></button>`).join("")}</div>
  <div class="sec"><h2>Visitas marcadas</h2><button class="lnk" onclick="F.c.s='Visita marcada';go('c')">ver todas</button></div>
- ${vis.length?vis.slice(0,5).map(c=>ln(c,"c",c.nome,esc([c.fone,c.objetivo,c.tipo].filter(Boolean).join(" · ")),money(c.orcamento))).join(""):`<p class="empty">Nenhuma visita marcada.</p>`}
+ ${vis.length?`<div class="grupo">${vis.slice(0,5).map(c=>ln(c,"c",c.nome,esc([c.fone,c.objetivo,c.tipo].filter(Boolean).join(" · ")),money(c.orcamento))).join("")}</div>`:`<p class="empty">Nenhuma visita marcada.</p>`}
  <div class="sec"><h2>Últimos imóveis</h2><button class="lnk" onclick="go('h')">ver todos</button></div>
- ${H.length?H.slice(0,6).map(h=>ln(h,"h",h.titulo||"Sem título",esc([h.tipo,h.bairro].filter(Boolean).join(" · "))+" · "+st(h.status),money(h.preco))).join(""):`<p class="empty">Nada cadastrado ainda. Comece pelo botão “Imóvel”.</p>`}`}
+ ${H.length?`<div class="cartoes">${H.slice(0,8).map(h=>{const im=(h.att||[]).find(a=>isImg(a)&&(a.thumb||a.url));
+  return `<button class="cartao" onclick="go('h','${h.id}')"><span class="capa">${im?`<img src="${esc(im.thumb||im.url)}" alt="" loading="lazy">`:I(IC[h.tipo]||"home")}${st(h.status)}<span class="preco">${money(h.preco)}</span></span><b>${esc(h.titulo||"Sem título")}</b><small>${esc([h.tipo,h.bairro,h.cidade].filter(Boolean).join(" · "))}</small></button>`}).join("")}</div>`:`<p class="empty">Nada cadastrado ainda. Comece pelo botão “Imóvel”.</p>`}`}
 
 /* arquivos: fotos são reduzidas antes de enviar; miniaturas ficam junto do cadastro */
 async function shrink(f,max,q){const bmp=await createImageBitmap(f),k=Math.min(1,max/Math.max(bmp.width,bmp.height)),c=document.createElement("canvas");c.width=Math.round(bmp.width*k);c.height=Math.round(bmp.height*k);
@@ -336,7 +544,7 @@ function housesV(){const f=F.h,q=f.q.toLowerCase();
  return `<div class="fc"><input id="q" type="search" placeholder="Buscar por título, bairro, proprietário…" value="${esc(f.q)}" oninput="F.h.q=this.value;keep()"><select onchange="F.h.t=this.value;render()">${opts(TIPOS,f.t,"Todos os tipos")}</select><select onchange="F.h.s=this.value;render()">${opts(SH,f.s,"Qualquer situação")}</select></div>
  ${(f.q||f.t||f.s)?`<p class="count">${L.length} resultado(s) · <button class="lnk" onclick="F.h={q:'',t:'',s:''};render()">limpar filtros</button></p>`:""}
  ${L.length?L.map(h=>{const im=(h.att||[]).find(a=>isImg(a)&&(a.thumb||a.url));
-  return item(h,`<div class="th">${im?`<img src="${esc(im.thumb||im.url)}" alt="" loading="lazy">`:I(IC[h.tipo]||"home")}</div>`,esc(h.titulo||"Sem título"),esc([h.tipo,h.bairro].filter(Boolean).join(" · ")),`<div class="pr">${money(h.preco)}</div>${st(h.status)}`,
+  return item(h,`<div class="th${im?" cover":""}">${im?`<img src="${esc(im.thumb||im.url)}" alt="" loading="lazy">`:I(IC[h.tipo]||"home")}</div>`,esc(h.titulo||"Sem título"),esc([h.tipo,h.bairro].filter(Boolean).join(" · ")),`<div class="pr">${money(h.preco)}</div>${st(h.status)}`,
   kv([["Endereço",esc([h.endereco,h.bairro,h.cidade].filter(Boolean).join(", "))],["Medidas (largura × comprimento)",(h.largura||h.comprimento)?[h.largura,h.comprimento].map(v=>v?nf(v):"—").join(" × ")+" m":""],["Área",h.area?nf(h.area)+" m²":""],["Quartos",esc(h.quartos)],["Proprietário",esc(h.dono)],["Telefone",esc(h.fone)]])
   +(h.obs?`<p class="obs">${esc(h.obs)}</p>`:"")+attView(h.att)
   +`<div class="row">${h.ll?`<a class="btn sm" target="_blank" rel="noopener" href="https://www.google.com/maps?q=${h.ll[0]},${h.ll[1]}">${I("pin")}Abrir no Maps</a>`:""}${h.fone?`<a class="btn sm" target="_blank" rel="noopener" href="https://wa.me/55${String(h.fone).replace(/\D/g,"")}">${I("chat")}Proprietário</a>`:""}<button class="btn sm" onclick="shareRec('h','${h.id}')">${I("share")}Compartilhar</button><button class="btn sm p" onclick="fh('${h.id}')">${I("edit")}Editar</button></div>`)}).join(""):`<p class="empty">Nenhum imóvel encontrado.</p>`}`}
