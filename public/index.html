@@ -11,7 +11,7 @@
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.css">
 <style>
 :root{color-scheme:light;
 /* Elegante imobiliário: papel marfim quente, tinta grafite (o cinza do S), laranja da marca (o D) só nos destaques.
@@ -385,6 +385,81 @@ input.erro:focus-visible{outline-color:var(--bad)}
 @keyframes tremer{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
 @media (prefers-reduced-motion:no-preference){.out .box.tremer{animation:tremer .4s ease both}}
 
+
+/* mapa no estilo do Google Maps, com o visual do app */
+.mapa-filtros{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:6px -18px 0;padding:2px 18px 6px}
+.mapa-filtros::-webkit-scrollbar{display:none}
+.mapa-filtros button{flex:none;display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border:1px solid var(--line);border-radius:999px;background:var(--sheet);color:var(--ink);font:600 13.5px var(--sans);cursor:pointer;transition:transform .3s var(--ressalto),background-color .25s,color .25s}
+.mapa-filtros button small{font-weight:700;opacity:.6}
+.mapa-filtros button.on{background:var(--pill);color:var(--onpill);border-color:transparent}
+.mapa-filtros button:active{transform:scale(.93)}
+.mapa{position:relative;margin-top:8px;border-radius:26px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--sombra);isolation:isolate}
+.mapa #lmap{height:calc(100vh - 330px);min-height:380px;margin:0;border:0;border-radius:0}
+.maplibregl-map{background:var(--soft);font-family:var(--sans)}
+.maplibregl-ctrl-attrib{font-size:10px;background:var(--vidro)!important;color:var(--mu)}
+.maplibregl-ctrl-attrib a{color:var(--ink2)}
+.maplibregl-ctrl-bottom-right{bottom:0}
+.mapa-ctl{position:absolute;z-index:500;right:12px;top:12px;display:flex;flex-direction:column;border-radius:16px;overflow:hidden;background:var(--vidro);border:1px solid var(--vidro-borda);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);box-shadow:var(--sombra)}
+.mapa-ctl button{width:44px;height:44px;display:grid;place-items:center;border:0;background:none;color:var(--ink);cursor:pointer}
+.mapa-ctl button+button{border-top:1px solid var(--line)}
+.mapa-ctl .ic{width:20px;height:20px;stroke-width:2}
+.mapa-aviso{position:absolute;z-index:500;left:12px;right:68px;top:12px;margin:0;padding:9px 13px;border-radius:14px;font-size:12.5px;font-weight:600;color:var(--ink2);background:var(--vidro);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border:1px solid var(--vidro-borda)}
+.mapa-aviso.carregando::before{content:"";display:inline-block;width:11px;height:11px;margin-right:8px;vertical-align:-1px;border:2px solid var(--line2);border-top-color:var(--ac);border-radius:50%;animation:sp .8s linear infinite}
+/* alfinete: gota com o símbolo do tipo; "+" = ainda disponível */
+.pino-l{background:none;border:0;padding:0;cursor:pointer}
+.pino{position:relative;display:block;width:40px;height:48px;animation:cair .55s var(--ressalto) both;animation-delay:var(--d,0ms);filter:drop-shadow(0 6px 8px rgba(30,20,10,.3))}
+.pino-cabeca{position:absolute;left:2px;top:2px;width:36px;height:36px;display:grid;place-items:center;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:var(--cor);border:3px solid #fff;transition:transform .35s var(--ressalto)}
+.pino-cabeca .ic{transform:rotate(45deg);width:18px;height:18px;color:#fff;stroke-width:2.1}
+.pino-mais{position:absolute;right:-3px;top:-4px;width:19px;height:19px;border-radius:50%;background:#fff;color:var(--ac);font:800 15px/19px var(--sans);font-style:normal;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.pino.sel .pino-cabeca{transform:rotate(-45deg) scale(1.22)}
+.pino.mini{width:22px;height:26px;animation:none;filter:none}
+.pino.mini .pino-cabeca{width:20px;height:20px;left:1px;top:1px;border-width:2px}
+.pino.mini .pino-cabeca .ic{width:11px;height:11px}
+.pino.mini .pino-mais{width:12px;height:12px;font-size:10px;line-height:12px;right:-3px;top:-3px}
+@keyframes cair{from{opacity:0;transform:translateY(-26px)}}
+.eu{display:block;width:20px;height:20px;border-radius:50%;background:#2f7bf6;border:3px solid #fff;box-shadow:0 0 0 8px rgba(47,123,246,.22)}
+/* cartão do imóvel que sobe sobre o mapa */
+.mapa-card{position:absolute;z-index:600;left:10px;right:10px;bottom:10px;padding:12px;border-radius:22px;background:var(--vidro);border:1px solid var(--vidro-borda);
+ -webkit-backdrop-filter:blur(22px) saturate(170%);backdrop-filter:blur(22px) saturate(170%);box-shadow:var(--sombra);transform:translateY(120%);transition:transform .45s var(--mola)}
+.mapa-card.on{transform:none}
+.mapa-card[hidden]{display:none}
+.mc{display:grid;grid-template-columns:76px 1fr;gap:12px;align-items:center;padding-right:30px}
+.mc-capa{width:76px;height:76px;border-radius:16px;overflow:hidden;display:grid;place-items:center;background:linear-gradient(135deg,var(--soft),color-mix(in srgb,var(--champ) 30%,var(--soft)))}
+.mc-capa img{width:100%;height:100%;object-fit:cover}
+.mc-capa .ic{width:30px;height:30px;stroke-width:1.3;color:color-mix(in srgb,var(--champ) 80%,var(--ink2))}
+.mc-tx{min-width:0}.mc-tx b{display:block;font:600 17px/1.2 var(--serif);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mc-tx small{display:block;margin-top:2px;font-size:12.5px;color:var(--mu);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mc-pr{display:flex;align-items:center;gap:10px;margin-top:6px}.mc-pr span:first-child{font:600 17px var(--serif)}
+.mc-acoes{display:flex;gap:8px;margin-top:12px}.mc-acoes .btn.p{flex:1}
+.mc-aprox{margin:8px 0 0;font-size:11.5px;color:var(--mu)}
+.mapa-fechar{position:absolute;right:8px;top:8px;width:34px;height:34px;display:grid;place-items:center;border:0;border-radius:50%;background:var(--soft);color:var(--ink2);cursor:pointer}
+.mapa-fechar .ic{width:16px;height:16px}
+.legenda{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px;margin:12px 2px 0;font-size:12.5px;color:var(--mu)}
+.legenda span:not(.pino):not(.pino-cabeca){margin-right:8px}
+
+/* cadastro: mini mapa para marcar a casa */
+.mini-mapa{position:relative;height:230px;margin-top:4px;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:var(--soft)}
+.mini-mapa .pino-l{cursor:grab}
+.mm-dica{position:absolute;z-index:3;left:10px;right:10px;top:10px;margin:0;padding:8px 12px;border-radius:12px;text-align:center;font-size:12.5px;font-weight:600;color:var(--ink2);
+ background:var(--vidro);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);pointer-events:none}
+.mm-dica[hidden]{display:none}
+.mm-acoes{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+.mm-acoes .btn{flex:1 1 auto}
+
+/* aviso de instalação no iPhone */
+.dica-ios{position:fixed;z-index:30;left:max(14px,env(safe-area-inset-left,0px));right:max(14px,env(safe-area-inset-right,0px));bottom:calc(96px + env(safe-area-inset-bottom,0px));
+ margin:0 auto;max-width:460px;display:grid;grid-template-columns:44px 1fr 34px;gap:12px;align-items:center;padding:12px;border-radius:22px;
+ background:var(--vidro);border:1px solid var(--vidro-borda);-webkit-backdrop-filter:blur(22px) saturate(170%);backdrop-filter:blur(22px) saturate(170%);box-shadow:var(--sombra);
+ animation:subir .5s var(--mola) both;transition:opacity .3s,transform .3s}
+.out .dica-ios{bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+.dica-ios.saindo{opacity:0;transform:translateY(20px)}
+.dica-ios img{border-radius:12px}
+.dica-ios p{margin:0;font-size:13px;line-height:1.4;color:var(--ink2)}
+.dica-ios p>b:first-child{display:block;color:var(--ink);font:600 15px var(--serif)}
+.dica-ios svg{width:16px;height:16px;vertical-align:-3px;fill:none;stroke:var(--info);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.dica-ios button{width:34px;height:34px;display:grid;place-items:center;border:0;border-radius:50%;background:var(--soft);color:var(--ink2);cursor:pointer}
+.dica-ios button .ic{width:15px;height:15px}
+
 /* movimento */
 @keyframes subir{from{opacity:0;transform:translateY(16px) scale(.985)}}
 @keyframes desenhar{from{stroke-dashoffset:var(--comp,600)}}
@@ -411,6 +486,8 @@ input.erro:focus-visible{outline-color:var(--bad)}
 <symbol id="i-plot" viewBox="0 0 24 24"><path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4"/><circle cx="12" cy="12" r="2.5"/></symbol>
 <symbol id="i-store" viewBox="0 0 24 24"><path d="M4 9l1.5-5h13L20 9"/><path d="M4 9a2.7 2.7 0 005.3 0 2.7 2.7 0 005.4 0A2.7 2.7 0 0020 9"/><path d="M5 12v8h14v-8"/></symbol>
 <symbol id="i-tree" viewBox="0 0 24 24"><path d="M12 21v-6"/><path d="M12 15c-4 0-6-2.5-6-5.5 0-2 1.2-3.2 2.5-3.5C9 4.5 10.3 3 12 3s3 1.5 3.5 3c1.3.3 2.5 1.5 2.5 3.5 0 3-2 5.5-6 5.5z"/></symbol>
+<symbol id="i-obra" viewBox="0 0 24 24"><path d="M3 21h18"/><path d="M5 21v-8l5-4 5 4v8"/><path d="M8.5 21v-4h3v4"/><path d="M15 9V4h6M18 4v6M18 10l-1.5 2h3z"/></symbol>
+<symbol id="i-loc" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></symbol>
 <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
 <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 19c.8-3.5 3.3-5 6.5-5s5.7 1.5 6.5 5"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14c2.5 0 4 1.3 4.7 4"/></symbol>
 <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11.5A7 7 0 005 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></symbol>
@@ -443,8 +520,8 @@ input.erro:focus-visible{outline-color:var(--bad)}
 <div class="vw" id="vw" onclick="if(event.target==this)closeV()"></div>
 
 <script>
-const TIPOS=["Casa","Apartamento","Terreno","Comercial","Sítio"],SH=["Disponível","Reservado","Vendido","Alugado"],SC=["Novo contato","Em atendimento","Visita marcada","Negociando","Fechado","Perdido"],OBJ=["Comprar","Alugar"];
-const IC={Casa:"home",Apartamento:"building",Terreno:"plot",Comercial:"store",Sítio:"tree"};
+const TIPOS=["Casa","Apartamento","Terreno","Aquisição e construção","Comercial","Sítio"],SH=["Disponível","Reservado","Vendido","Alugado"],SC=["Novo contato","Em atendimento","Visita marcada","Negociando","Fechado","Perdido"],OBJ=["Comprar","Alugar"];
+const IC={Casa:"home",Apartamento:"building",Terreno:"plot","Aquisição e construção":"obra",Comercial:"store",Sítio:"tree"};
 const SCOL={"Disponível":"var(--ok)","Reservado":"var(--warn)","Vendido":"var(--mu)","Alugado":"var(--info)","Novo contato":"var(--info)","Em atendimento":"var(--warn)","Visita marcada":"var(--ac)","Negociando":"var(--warn)","Fechado":"var(--ok)","Perdido":"var(--bad)"};
 const MAXMB=15; /* limite por arquivo depois de comprimir (fotos são reduzidas automaticamente) */
 /* leitura de documentos (Firebase AI Logic). Tenta os modelos na ordem; troque se o Google lançar outro. */
@@ -495,6 +572,14 @@ setTimeout(()=>{if(U===undefined&&!FAIL)window.onFail({code:"tempo esgotado",mes
  const solta=()=>{if(y0===null)return;y0=null;f.classList.remove("arrastando");const rapido=dy/Math.max(1,performance.now()-t0)>.6;
   f.style.removeProperty("--arrasto");if(dy>120||(rapido&&dy>30))closeM()};
  f.addEventListener("pointerup",solta);f.addEventListener("pointercancel",solta);
+ /* iPhone: o app se instala pelo Safari (Compartilhar → Adicionar à Tela de Início); um aviso ensina, uma vez */
+ const ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
+ const instalado=matchMedia("(display-mode: standalone)").matches||navigator.standalone;
+ let visto=false;try{visto=!!localStorage.getItem("dica-ios")}catch(e){}
+ if(ios&&!instalado&&!visto){const d=document.createElement("div");d.className="dica-ios";d.setAttribute("role","note");
+  d.innerHTML=`<img src="img/app-192.png" alt="" width="44" height="44"><p><b>Instale o app no iPhone</b>No Safari, toque em <svg viewBox="0 0 24 24" aria-label="Compartilhar"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/></svg> e depois em <b>Adicionar à Tela de Início</b>.</p><button type="button" aria-label="Fechar aviso">${I("x")}</button>`;
+  d.querySelector("button").onclick=()=>{try{localStorage.setItem("dica-ios","1")}catch(e){}d.classList.add("saindo");setTimeout(()=>d.remove(),300)};
+  setTimeout(()=>document.body.append(d),1500)}
  /* app instalável: o service worker guarda só o visual (os dados vêm sempre do Firebase) */
  if("serviceWorker" in navigator&&location.protocol!="file:")addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
 })();
@@ -584,16 +669,108 @@ function housesV(){const f=F.h,q=f.q.toLowerCase();
   +(h.obs?`<p class="obs">${esc(h.obs)}</p>`:"")+attView(h.att)
   +`<div class="row">${h.ll?`<a class="btn sm" target="_blank" rel="noopener" href="https://www.google.com/maps?q=${h.ll[0]},${h.ll[1]}">${I("pin")}Abrir no Maps</a>`:""}${h.fone?`<a class="btn sm" target="_blank" rel="noopener" href="https://wa.me/55${String(h.fone).replace(/\D/g,"")}">${I("chat")}Proprietário</a>`:""}<button class="btn sm" onclick="shareRec('h','${h.id}')">${I("share")}Compartilhar</button><button class="btn sm p" onclick="fh('${h.id}')">${I("edit")}Editar</button></div>`)}).join(""):`<p class="empty">Nenhum imóvel encontrado.</p>`}`}
 
-function mapV(){window._P=D.houses.filter(h=>h.ll);return window._P.length?`<div id="lmap"></div>`:`<p class="empty">Nenhum imóvel com localização. Edite um imóvel e informe as coordenadas.</p>`}
-function drawMap(){if(LM){LM.remove();LM=null}const el=$("#lmap");if(!el)return;if(!window.L){el.innerHTML='<p class="empty" style="padding:30px">Mapa indisponível (sem internet?).</p>';return}
- LM=L.map(el);L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(LM);
- const g=L.featureGroup(_P.map(h=>L.marker(h.ll,{icon:L.divIcon({className:"",html:`<div class="pn">${I(IC[h.tipo]||"home")}</div>`,iconSize:[30,30],iconAnchor:[15,15]})}).addTo(LM).bindPopup(`<b>${esc(h.titulo)}</b><br>${esc(h.endereco||h.bairro||"")}<br>${money(h.preco)}`)));LM.fitBounds(g.getBounds().pad(.2),{maxZoom:16})}
+/* ---------- mapa: no estilo do Google Maps (OpenFreeMap + MapLibre, gratuitos e sem chave), com o visual do app;
+   um alfinete por imóvel, pelo endereço ----------
+   Quem tem a localização colada (ou GPS) usa ela; quem só tem endereço é localizado pelo OpenStreetMap (Nominatim)
+   e a posição fica guardada no aparelho para não perguntar de novo. Ao salvar um imóvel sem localização, o endereço
+   é localizado e a posição vai junto no cadastro (marcada como aproximada). */
+let FM="todos",MK={};
+const FILTROS_M=[["todos","Todos"],["disp","Disponíveis"],["Casa","Casas"],["Terreno","Terrenos"],["Aquisição e construção","Aquisição e construção"]];
+const endTxt=h=>[h.endereco,h.bairro,h.cidade].filter(Boolean).join(", ");
+const geoChave=h=>endTxt(h)+", Brasil";
+function geoCache(q){try{const v=localStorage.getItem("geo:"+q);return v?JSON.parse(v):undefined}catch(e){return undefined}}
+function geoGuardar(q,v){try{localStorage.setItem("geo:"+q,JSON.stringify(v))}catch(e){}}
+async function geocodificar(q){const c=geoCache(q);if(c!==undefined)return c;
+ try{const r=await fetch("https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&countrycodes=br&accept-language=pt-BR&q="+encodeURIComponent(q));
+  if(!r.ok)return undefined;const j=await r.json(),v=j[0]?[+(+j[0].lat).toFixed(6),+(+j[0].lon).toFixed(6)]:null;geoGuardar(q,v);return v}catch(e){return undefined}}
+const posDe=h=>h.ll||(endTxt(h)?geoCache(geoChave(h)):null)||null;
+const passaM=h=>FM=="todos"||(FM=="disp"?h.status=="Disponível":h.tipo==FM);
+/* o alfinete: gota na cor da situação, o símbolo do tipo dentro e um "+" quando ainda está disponível */
+function pino(h,atraso=0,mini=false){const disp=h.status=="Disponível",cor=disp?"var(--ac)":h.status=="Reservado"?"var(--warn)":"#8b847a";
+ return `<span class="pino${mini?" mini":""}" style="--cor:${cor};--d:${atraso}ms"><span class="pino-cabeca">${I(IC[h.tipo]||"home")}</span>${disp?'<i class="pino-mais">+</i>':""}</span>`}
+function filtrarMapa(k,b){FM=k;document.querySelectorAll(".mapa-filtros button").forEach(x=>x.classList.toggle("on",x===b));drawMap()}
+function mapV(){if(!D.houses.length)return `<p class="empty">Nenhum imóvel cadastrado ainda.</p>`;
+ const qtd=k=>D.houses.filter(h=>k=="todos"||(k=="disp"?h.status=="Disponível":h.tipo==k)).length;
+ return `<div class="mapa-filtros" role="group" aria-label="Mostrar no mapa">${FILTROS_M.map(([k,n])=>`<button type="button" class="${FM==k?"on":""}" data-k="${k}" onclick="filtrarMapa(this.dataset.k,this)">${n}<small>${qtd(k)}</small></button>`).join("")}</div>
+ <div class="mapa"><div id="lmap"></div>
+  <div class="mapa-ctl"><button type="button" onclick="LM&&LM.zoomIn()" aria-label="Aproximar">${I("plus")}</button><button type="button" onclick="LM&&LM.zoomOut()" aria-label="Afastar"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"/></svg></button><button type="button" onclick="ondeEstou()" aria-label="Minha localização">${I("loc")}</button></div>
+  <p class="mapa-aviso" id="maviso" hidden></p><div class="mapa-card" id="mcard" hidden></div></div>
+ <div class="legenda">${pino({tipo:"Casa",status:"Disponível"},0,true)}<span>Disponível</span>${pino({tipo:"Casa",status:"Reservado"},0,true)}<span>Reservado</span>${pino({tipo:"Casa",status:"Vendido"},0,true)}<span>Vendido ou alugado</span></div>`}
+const enquadrar=(pts,animar)=>{if(!pts.length)return;const b=new maplibregl.LngLatBounds();pts.forEach(p=>b.extend([p[1],p[0]]));
+ LM.fitBounds(b,{padding:{top:80,bottom:80,left:60,right:70},maxZoom:15,duration:animar?700:0})};
+function drawMap(){if(LM){LM.remove();LM=null}MK={};const el=$("#lmap");if(!el)return;
+ if(!window.maplibregl){el.innerHTML='<p class="empty" style="padding:30px">Mapa indisponível (sem internet?).</p>';return}
+ const escuro=matchMedia("(prefers-color-scheme: dark)").matches;
+ LM=new maplibregl.Map({container:el,style:"https://tiles.openfreemap.org/styles/"+(escuro?"dark":"liberty"),center:[-39.5,-5.2],zoom:6,
+  attributionControl:{compact:true},dragRotate:false,pitchWithRotate:false,cooperativeGestures:false});
+ LM.touchZoomRotate.disableRotation();
+ LM.on("click",fecharCard);
+ const lista=D.houses.filter(passaM),pts=[],faltam=[];let n=0;
+ lista.forEach(h=>{const ll=posDe(h);if(ll){pts.push(ll);adicionar(h,ll,n++)}else if(endTxt(h)&&geoCache(geoChave(h))===undefined)faltam.push(h)});
+ enquadrar(pts,false);
+ const sem=lista.filter(h=>!posDe(h)&&!faltam.includes(h)).length;
+ if(faltam.length)localizar(faltam,pts,sem);else if(sem)aviso(semTxt(sem));}
+const semTxt=n=>`${n} imóve${n>1?"is":"l"} sem endereço encontrado. Edite e cole a localização do Google Maps.`;
+function adicionar(h,ll,i){const el=document.createElement("button");el.type="button";el.className="pino-l";el.innerHTML=pino(h,Math.min(i,14)*55);
+ el.setAttribute("aria-label",(h.titulo||h.tipo||"Imóvel")+", "+(h.status||""));
+ const m=new maplibregl.Marker({element:el,anchor:"bottom"}).setLngLat([ll[1],ll[0]]).addTo(LM);
+ el.addEventListener("click",e=>{e.stopPropagation();abrirCard(h,m)});MK[h.id]=m}
+/* endereços ainda não localizados: um por vez (regra do serviço gratuito), aparecendo no mapa conforme chegam */
+async function localizar(lista,pts,sem){const mapa=LM;let falhou=sem,n=pts.length;
+ for(let i=0;i<lista.length;i++){if(LM!==mapa)return;const faltam=lista.length-i;aviso(`Localizando ${faltam} endereço${faltam>1?"s":""}…`,true);
+  const h=lista[i],ll=await geocodificar(geoChave(h));if(LM!==mapa)return;
+  if(ll){pts.push(ll);adicionar(h,ll,n++);enquadrar(pts,true)}else falhou++;
+  if(i<lista.length-1)await new Promise(r=>setTimeout(r,1100))}
+ aviso(falhou?semTxt(falhou):"")}
+function aviso(t,carregando){const a=$("#maviso");if(!a)return;a.hidden=!t;a.classList.toggle("carregando",!!carregando);a.textContent=t}
+function abrirCard(h,m){document.querySelectorAll(".pino.sel").forEach(p=>p.classList.remove("sel"));const pe=m.getElement()&&m.getElement().querySelector(".pino");if(pe)pe.classList.add("sel");
+ const im=(h.att||[]).find(a=>isImg(a)&&(a.thumb||a.url)),ll=m.getLngLat(),c=$("#mcard");
+ c.innerHTML=`<button type="button" class="mapa-fechar" onclick="fecharCard()" aria-label="Fechar">${I("x")}</button>
+  <div class="mc"><div class="mc-capa">${im?`<img src="${esc(im.thumb||im.url)}" alt="">`:I(IC[h.tipo]||"home")}</div>
+  <div class="mc-tx"><b>${esc(h.titulo||"Sem título")}</b><small>${esc(endTxt(h)||h.tipo||"")}</small><div class="mc-pr"><span>${money(h.preco)}</span>${st(h.status)}</div></div></div>
+  <div class="mc-acoes"><button type="button" class="btn sm p" onclick="go('h','${h.id}')">Ver imóvel</button><a class="btn sm" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${ll.lat},${ll.lng}">${I("pin")}Rotas</a>${h.fone?`<a class="btn sm" target="_blank" rel="noopener" href="https://wa.me/55${String(h.fone).replace(/\D/g,"")}" aria-label="WhatsApp do proprietário">${I("chat")}</a>`:""}</div>
+  ${h.ll&&!h.llAprox?"":`<p class="mc-aprox">Posição aproximada pelo endereço</p>`}`;
+ c.hidden=false;requestAnimationFrame(()=>c.classList.add("on"));LM.easeTo({center:ll,offset:[0,-70],duration:500});try{navigator.vibrate&&navigator.vibrate(8)}catch(e){}}
+function fecharCard(){const c=$("#mcard");if(!c||c.hidden)return;c.classList.remove("on");document.querySelectorAll(".pino.sel").forEach(p=>p.classList.remove("sel"));setTimeout(()=>{if(!c.classList.contains("on"))c.hidden=true},320)}
+function ondeEstou(){if(!navigator.geolocation||!LM)return aviso("Localização indisponível neste aparelho.");
+ navigator.geolocation.getCurrentPosition(p=>{const ll=[p.coords.longitude,p.coords.latitude];if(window._eu)window._eu.remove();
+  const e=document.createElement("span");e.className="eu";window._eu=new maplibregl.Marker({element:e}).setLngLat(ll).addTo(LM);LM.flyTo({center:ll,zoom:15,duration:900})},
+  ()=>aviso("Não consegui acessar a sua localização. Permita o acesso nas configurações do navegador."),{timeout:8000,enableHighAccuracy:true})}
+
+/* ---------- cadastro: marcar a casa no mini mapa (tocar, arrastar o alfinete, pelo endereço ou pelo GPS) ---------- */
+let MMK=null;
+function miniMapa(h){const el=$("#mmapa");if(!el||!window.maplibregl)return;
+ const escuro=matchMedia("(prefers-color-scheme: dark)").matches,ini=h.ll||(endTxt(h)?geoCache(geoChave(h)):null);
+ window.MM=new maplibregl.Map({container:el,style:"https://tiles.openfreemap.org/styles/"+(escuro?"dark":"liberty"),
+  center:ini?[ini[1],ini[0]]:[-40.6776,-5.1786],zoom:ini?16:12,attributionControl:{compact:true},dragRotate:false,pitchWithRotate:false,cooperativeGestures:true});
+ MM.touchZoomRotate.disableRotation();
+ const pe=document.createElement("div");pe.className="pino-l";pe.innerHTML=pino({tipo:h.tipo||"Casa",status:"Disponível"});
+ MMK=new maplibregl.Marker({element:pe,anchor:"bottom",draggable:true});
+ if(ini)MMK.setLngLat([ini[1],ini[0]]).addTo(MM);
+ MMK.on("dragend",()=>mmMarcar(MMK.getLngLat(),false));
+ MM.on("click",e=>mmMarcar(e.lngLat,false));
+ setTimeout(()=>MM&&MM.resize(),550)}   /* a folha termina de subir: o mapa recalcula o tamanho */
+function mmMarcar(ll,voar,texto){if(!window.MM)return;const p=[ll.lng??ll[1],ll.lat??ll[0]];
+ if(!MMK.getElement().isConnected)MMK.setLngLat(p).addTo(MM);else MMK.setLngLat(p);
+ $("#b3").value=(+p[1]).toFixed(6)+", "+(+p[0]).toFixed(6);
+ $("#mmhint").textContent=texto||"Localização marcada. Arraste o alfinete para ajustar.";$("#mmdica").hidden=true;
+ if(voar)MM.flyTo({center:p,zoom:17,duration:800});try{navigator.vibrate&&navigator.vibrate(8)}catch(e){}}
+async function mmEndereco(){const o={endereco:$("#a4").value,bairro:$("#a5").value,cidade:$("#a6").value};
+ if(!endTxt(o)){$("#mmhint").textContent="Preencha o endereço, o bairro ou a cidade primeiro.";return}
+ $("#mmhint").textContent="Procurando o endereço…";const ll=await geocodificar(geoChave(o));
+ if(ll)mmMarcar(ll,true,"Achei pelo endereço. Confira e arraste o alfinete se precisar.");
+ else $("#mmhint").textContent="Não achei esse endereço. Toque no mapa onde fica a casa."}
+function mmGps(){if(!navigator.geolocation){$("#mmhint").textContent="GPS indisponível neste aparelho.";return}
+ $("#mmhint").textContent="Pegando a sua localização…";
+ navigator.geolocation.getCurrentPosition(p=>mmMarcar([p.coords.latitude,p.coords.longitude],true,"Marcado onde você está. Arraste o alfinete para ajustar."),
+  ()=>{$("#mmhint").textContent="Não consegui acessar a localização. Permita o acesso nas configurações."},{timeout:10000,enableHighAccuracy:true})}
+function mmDoCampo(){const ll=parseLL($("#b3").value);if(ll&&window.MM){if(!MMK.getElement().isConnected)MMK.setLngLat([ll[1],ll[0]]).addTo(MM);else MMK.setLngLat([ll[1],ll[0]]);MM.flyTo({center:[ll[1],ll[0]],zoom:16,duration:600});$("#mmdica").hidden=true}}
 function keep(){const v=$("#q"),p=v.selectionStart;render();const n=$("#q");n.focus();n.setSelectionRange(p,p)}
 const tg=e=>{e.setAttribute("aria-expanded",e.classList.toggle("open"))},kd=(e,t)=>{if(e.target===t&&(e.key=="Enter"||e.key==" ")){e.preventDefault();tg(t)}};
 
 /* janelas */
 let LF;function openM(h){LF=document.activeElement;$("#mb").innerHTML=h;$("#m").classList.add("on");setTimeout(()=>$("#mb").focus(),40)}
-function closeM(){SCAN=null;if(FA)cancelFA();$("#m").classList.remove("on");if(LF&&LF.focus)LF.focus()}
+function closeM(){SCAN=null;if(FA)cancelFA();if(window.MM){MM.remove();window.MM=null}$("#m").classList.remove("on");if(LF&&LF.focus)LF.focus()}
 $("#m").onmousedown=e=>{if(e.target.id=="m")closeM()};
 async function openV(id){const a=AT[id];if(!a)return;const vw=$("#vw");vw.innerHTML=`<p style="color:#ddd"><span class="spin"></span>Carregando…</p>`;vw.classList.add("on");
  let u;try{u=await fileURL(a)}catch(e){vw.innerHTML=`<p style="color:#f99">Não consegui abrir: ${esc(e.code||e.message)}</p><div class="bt"><button class="btn sm" onclick="closeV()">Fechar</button></div>`;return}
@@ -643,9 +820,9 @@ function fh(id){const h=D.houses.find(x=>x.id==id)||{tipo:"Casa",status:"Dispon�
  ${inp("a8","Área (m²)",h.area,"number")}<div class="hint" id="ahint" style="align-self:end;padding-bottom:10px"></div>
  <div class="fh" style="margin-top:4px">Proprietário e localização</div>
  ${inp("b1","Proprietário",h.dono)}${inp("b2","Telefone do proprietário",h.fone,"tel")}
- <div class="full"><label for="b3">Localização</label><input id="b3" value="${h.ll?h.ll.join(", "):""}" placeholder="cole as coordenadas ou o link do Google Maps"></div>
+ <div class="full"><label for="b3">Localização no mapa</label><div class="mini-mapa" id="mmapa"><p class="mm-dica" id="mmdica">Toque no mapa ou arraste o alfinete até a casa</p></div><div class="mm-acoes"><button type="button" class="btn sm" onclick="mmEndereco()">${I("pin")}Buscar pelo endereço</button><button type="button" class="btn sm" onclick="mmGps()">${I("loc")}Estou no imóvel</button></div><input id="b3" value="${h.ll&&!h.llAprox?h.ll.join(", "):""}" placeholder="ou cole as coordenadas / o link do Google Maps" oninput="mmDoCampo()"><p class="hint" id="mmhint">Sem marcar, o mapa localiza pelo endereço ao salvar.</p></div>
  <div class="full"><label for="b4">Observações</label><textarea id="b4" rows="3">${esc(h.obs)}</textarea></div>
- ${attEditor("Fotos e vídeos do imóvel, escritura, matrícula, IPTU, planta, contrato…")}</div>${actions("sh",id,"houses")}`);drawAtt()}
+ ${attEditor("Fotos e vídeos do imóvel, escritura, matrícula, IPTU, planta, contrato…")}</div>${actions("sh",id,"houses")}`);drawAtt();miniMapa(h)}
 const nf=v=>Number(v).toLocaleString("pt-BR",{maximumFractionDigits:2});
 /* área = largura × comprimento, preenchida sozinha enquanto a corretora não digitar outra */
 function calcA(){const x=parseFloat($("#dx").value),z=parseFloat($("#dz").value),a=$("#a8"),h=$("#ahint");if(!(x>0&&z>0)){h.textContent="";return}
@@ -654,7 +831,9 @@ function gps(){navigator.geolocation?navigator.geolocation.getCurrentPosition(p=
 function sh(){if($("#b3").value&&!parseLL($("#b3").value))return alert("Coordenadas inválidas. Use o formato: -5.1234, -40.5678");
  const att=attOut();if(!att)return;
  const o={id:FA.id,titulo:$("#a1").value.trim(),tipo:$("#a2").value,status:$("#a3").value,endereco:$("#a4").value,bairro:$("#a5").value,cidade:$("#a6").value,preco:$("#a7").value,area:$("#a8").value,largura:$("#dx").value,comprimento:$("#dz").value,quartos:$("#a9").value,dono:$("#b1").value,fone:$("#b2").value,ll:parseLL($("#b3").value),obs:$("#b4").value,att};
- finishFA();closeM();put("imoveis",o)}
+ finishFA();closeM();
+ /* sem localização colada: localiza pelo endereço e salva a posição junto (marcada como aproximada) */
+ if(!o.ll&&endTxt(o)){geocodificar(geoChave(o)).then(ll=>{if(ll){o.ll=ll;o.llAprox=true}put("imoveis",o)})}else put("imoveis",o)}
 function del(k,id){const r=D[k].find(x=>x.id==id);if(!confirm("Excluir definitivamente"+((r&&r.att&&r.att.length)?" (e os "+r.att.length+" anexos)":"")+"?"))return;
  if(FA)cancelFA();
  (r&&r.att||[]).forEach(a=>window.unload(a.path));closeM();rm(k=="houses"?"imoveis":"clientes",id)}
@@ -807,7 +986,7 @@ async function shareGo(){const t=$("#shtx").value,o=SHR&&SHR.o,data={text:t};
 
 render();
 </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.js"></script>
 <script type="module">
 const g=id=>document.getElementById(id);
 try{

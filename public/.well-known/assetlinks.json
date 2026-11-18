@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "br.com.darlingsoares.app",
+      "sha256_cert_fingerprints": [
+        "49:55:01:B7:BA:A9:C0:02:A5:E1:92:5B:1E:64:6D:75:8C:A1:98:B5:73:87:CD:FD:21:9C:40:02:5A:85:8A:84"
+      ]
+    }
+  }
+]
